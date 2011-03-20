@@ -12,6 +12,7 @@ namespace SolPowerTool.App.Data
     [DebuggerDisplay("BuildConfiguration = {Name}")]
     public class BuildConfiguration : DTOBase
     {
+        //TODO: Make Code Analysis settings configurable.
         private const string CodeAnalysisRuleSetDirectories =
             @";C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets";
 

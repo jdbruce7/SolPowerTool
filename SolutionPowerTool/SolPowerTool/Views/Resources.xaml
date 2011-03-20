@@ -42,8 +42,6 @@
                 <MultiDataTrigger.Conditions>
                     <Condition Binding="{Binding RunCodeAnalysis}"
                                Value="True" />
-                    <!--<Condition Binding="{Binding HasCodeAnalysisRuleSet}"
-                               Value="True" />-->
                     <Condition Binding="{Binding HasCodeAnalysisRuleSetFile}"
                                Value="False" />
                 </MultiDataTrigger.Conditions>

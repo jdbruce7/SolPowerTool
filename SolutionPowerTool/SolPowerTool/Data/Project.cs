@@ -225,7 +225,6 @@ namespace SolPowerTool.App.Data
         private void _parse()
         {
             _xmlDocument = new XmlDocument();
-            //_xmlDocument.PreserveWhitespace = true;
             _xmlDocument.Load(ProjectFilename);
             var nsmgr = new XmlNamespaceManager(_xmlDocument.NameTable);
             nsmgr.AddNamespace("root", "http://schemas.microsoft.com/developer/msbuild/2003");

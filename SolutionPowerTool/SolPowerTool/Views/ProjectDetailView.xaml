@@ -40,27 +40,14 @@
 
                                 <wpf:DataGridCheckBoxColumn Binding="{Binding IsSelected}"
                                                             Width="30" />
-                                <!--<wpf:DataGridCheckBoxColumn Header="*"
-                                                                                Width="30"
-                                                                                Binding="{Binding IsDirty,Mode=OneWay}"
-                                                                                IsReadOnly="True"
-                                                                                CellStyle="{StaticResource dirtyColorStyle}" />-->
                                 <wpf:DataGridTextColumn Header="Name"
                                                         Width="250"
                                                         IsReadOnly="True"
                                                         Binding="{Binding Name,Mode=OneWay}" />
-                                <!--<wpf:DataGridTextColumn Header="Real name"
-                                                        Width="250"
-                                                        IsReadOnly="True"
-                                                        Binding="{Binding RealName,Mode=OneWay}" />-->
                                 <wpf:DataGridTextColumn Header="Normalized output path"
                                                         Width="250"
                                                         Binding="{Binding NormalizedOutputPath}"
                                                         CellStyle="{StaticResource dirtyColorStyle}" />
-                                <!--<wpf:DataGridTextColumn Header="Output path"
-                                                        Width="250"
-                                                        Binding="{Binding OutputPath}"
-                                                        CellStyle="{StaticResource dirtyColorStyle}" />-->
                                 <wpf:DataGridCheckBoxColumn Header="CA"
                                                             Binding="{Binding RunCodeAnalysis}"
                                                             CellStyle="{StaticResource dirtyColorStyle}" />

@@ -78,7 +78,7 @@
                         SelectedIndex="{Binding SelectedControlTab,Converter={StaticResource enumToInt32Converter}}"
                         MinHeight="175"
                         Height="200">
-
+                <!-- TODO: Cleanup control panels features.  -->
                 <TabItem Header="Projects">
                     <StackPanel Orientation="Horizontal">
                         <StackPanel.Resources>
@@ -198,13 +198,6 @@
 
                         <wpf:DataGrid.Columns>
                             <wpf:DataGridCheckBoxColumn Binding="{Binding IsSelected}" />
-                            <!--<wpf:DataGridCheckBoxColumn Header="*"
-                                                        Binding="{Binding IsDirty,Mode=OneWay}"
-                                                        IsReadOnly="True" />-->
-                            <!--<wpf:DataGridCheckBoxColumn Header="%"
-                                                        Width="30"
-                                                        Binding="{Binding IrregularOutputPaths,Mode=OneWay}"
-                                                        IsReadOnly="True" />-->
                             <wpf:DataGridTextColumn Header="Name"
                                                     IsReadOnly="True"
                                                     Binding="{Binding ProjectName,Mode=OneWay}" />
@@ -261,10 +254,6 @@
                                                         Width="130"
                                                         Binding="{Binding Project.IrregularOutputPaths,Mode=OneWay}"
                                                         IsReadOnly="True" />
-                            <!--<wpf:DataGridTextColumn Header="Output Path"
-                                                    Binding="{Binding OutputPath}"
-                                                    CellStyle="{StaticResource dirtyColorStyle}" />-->
-
                         </wpf:DataGrid.Columns>
                     </wpf:DataGrid>
 
@@ -306,7 +295,6 @@
                                 <wpf:DataGridTextColumn Header="Configuration"
                                                         IsReadOnly="True"
                                                         Binding="{Binding Name,Mode=OneWay}" />
-
                                 <wpf:DataGridCheckBoxColumn Header="CA"
                                                             Binding="{Binding RunCodeAnalysis}"
                                                             CellStyle="{StaticResource dirtyColorStyle}" />
@@ -314,11 +302,6 @@
                                                         Binding="{Binding RootedCodeAnalysisRuleSet}"
                                                         Width="350"
                                                         CellStyle="{StaticResource problemCodeAnalysisRuleSetColorStyle}" />
-                                <!--<wpf:DataGridTextColumn Header="CA Ruleset"
-                                                    Binding="{Binding CodeAnalysisRuleSet,Mode=OneWay}"
-                                                    IsReadOnly="True"
-                                                    CellStyle="{StaticResource problemCodeAnalysisRuleSetColorStyle}" />-->
-
                                 <wpf:DataGridCheckBoxColumn Header="IsMissingElements"
                                                             IsReadOnly="True"
                                                             Binding="{Binding IsMissingElements,Mode=OneWay}" />
@@ -368,9 +351,6 @@
                             <wpf:DataGridTextColumn Header="Project"
                                                     IsReadOnly="True"
                                                     Binding="{Binding Project.ProjectName}" />
-                            <!--<wpf:DataGridTextColumn Header="HintPath"
-                                                    IsReadOnly="True"
-                                                    Binding="{Binding HintPath,Mode=OneWay}" />-->
                             <wpf:DataGridCheckBoxColumn Header="R/O"
                                                         IsReadOnly="True"
                                                         Binding="{Binding Project.IsReadOnly,Mode=OneWay}" />

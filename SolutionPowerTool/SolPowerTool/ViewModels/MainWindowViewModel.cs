@@ -24,7 +24,6 @@ namespace SolPowerTool.App.ViewModels
         private ICommand _checkoutCommand;
         private ICommand _editProjectFileCommand;
         private ICommand _fixMissingElementsCommand;
-        //private ICommand _filterOutBuildConfigsCommand;
         private bool _isBuildConfigFiltered;
         private ICommand _loadSolutionCommand;
         private ICommand _makeWriteableCommand;
@@ -57,8 +56,6 @@ namespace SolPowerTool.App.ViewModels
             DTOBase.AnyDirtyChanged += DTOBase_AnyDirtyChanged;
 
             ShowDetails = Settings.Default.ShowDetails;
-            //SolutionFilename = @"D:\Dev\MEFConsoleApp\MEFConsoleApp.sln";
-            //SolutionFilename = @"Y:\TFS1\CAR_Audition\Main\Aura.Client.sln";
             SolutionFilename = Settings.Default.SolutionFilename;
             SelectedControlTab = Settings.Default.SelectedControlTab;
             SelectedProjectsTab = Settings.Default.SelectedProjectsTab;

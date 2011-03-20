@@ -86,7 +86,6 @@ namespace SolPowerTool.App.Data
         {
             _solutionDirectoryInfo = new DirectoryInfo(Path.GetDirectoryName(SolutionFilename));
             SolutionDirectoryname = _solutionDirectoryInfo.FullName;
-            //var projects = new List<Project>();
 
             using (var sr = new StreamReader(SolutionFilename))
             {

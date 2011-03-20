@@ -70,6 +70,7 @@
     <Compile Include="Common\AssemblyLoader.cs" />
     <Compile Include="Common\DTOBase.cs" />
     <Compile Include="Common\EnumToInt32Converter.cs" />
+    <Compile Include="Common\ExceptionHandler.cs" />
     <Compile Include="Common\RowDetailsVisibilityConverter.cs" />
     <Compile Include="Common\StringExt.cs" />
     <Compile Include="Common\TeamFoundationClient.cs" />
@@ -170,8 +171,8 @@
     </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>if exist "$(TargetPath).bak" del  "$(TargetPath).bak"
-if exist "$(TargetPath)" move "$(TargetPath)" "$(TargetPath).bak"</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
