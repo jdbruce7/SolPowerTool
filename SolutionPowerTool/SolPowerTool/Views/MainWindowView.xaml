@@ -302,7 +302,7 @@
                                                         Binding="{Binding RootedCodeAnalysisRuleSet}"
                                                         Width="350"
                                                         CellStyle="{StaticResource problemCodeAnalysisRuleSetColorStyle}" />
-                                <wpf:DataGridCheckBoxColumn Header="IsMissingElements"
+                                <wpf:DataGridCheckBoxColumn Header="Missing elements"
                                                             IsReadOnly="True"
                                                             Binding="{Binding IsMissingElements,Mode=OneWay}" />
 
