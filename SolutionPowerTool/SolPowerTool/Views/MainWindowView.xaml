@@ -404,15 +404,6 @@
             </TabControl>
 
         </DockPanel>
-        <Label Content="*"
-               Grid.Row="2"
-               Height="28"
-               Margin="118,29,0,0"
-               Name="label1"
-               Visibility="{Binding Path=Solution.IsDirty,Converter={StaticResource booleanToVisibilityConverter}}"
-               VerticalAlignment="Top"
-               HorizontalAlignment="Left"
-               Width="35" />
         <Button Content="Save Changes"
                 Grid.Row="2"
                 Height="23"
@@ -422,5 +413,14 @@
                 Command="{Binding SaveChangesCommand}"
                 VerticalAlignment="Top"
                 Width="100" />
+        <Button Command="{Binding ExportViewCommand}"
+                Content="Export"
+                Height="23"
+                HorizontalAlignment="Left"
+                Margin="118,29,0,0"
+                Name="button7"
+                VerticalAlignment="Top"
+                Width="100"
+                Grid.Row="2" />
     </Grid>
 </Window>

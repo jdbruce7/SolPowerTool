@@ -61,11 +61,6 @@ namespace SolPowerTool.App.Data
             }
         }
 
-        public IEnumerable<string> DistinctReferencedFiles
-        {
-            get { return DistinctReferences.Select(r => r.Name).OrderBy(s => s); }
-        }
-
         private void OnDirtyChanged(object sender, EventArgs e)
         {
             RaisePropertyChanged(() => IsDirty);

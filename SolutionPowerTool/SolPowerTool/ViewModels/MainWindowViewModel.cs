@@ -23,6 +23,7 @@ namespace SolPowerTool.App.ViewModels
         private ObservableCollection<BuildConfigItemFilter> _buildConfigFilters;
         private ICommand _checkoutCommand;
         private ICommand _editProjectFileCommand;
+        private ICommand _exportViewCommand;
         private ICommand _fixMissingElementsCommand;
         private bool _isBuildConfigFiltered;
         private ICommand _loadSolutionCommand;
@@ -149,6 +150,11 @@ namespace SolPowerTool.App.ViewModels
                                                                   configuration.IsDirty = true;
                                                           }));
             }
+        }
+
+        public ICommand ExportViewCommand
+        {
+            get { return _exportViewCommand ?? (_exportViewCommand = new RelayCommand<object>(param => _export())); }
         }
 
         public Project SelectedProject
@@ -372,6 +378,143 @@ namespace SolPowerTool.App.ViewModels
                 if (_saveChangesCommand != null) _saveChangesCommand.CanExecute(null);
         }
 
+
+        private void _export()
+        {
+            string file = Path.GetTempFileName();
+            File.Delete(file);
+            file = file + ".csv";
+            switch (SelectedProjectsTab)
+            {
+                case ProjectTabs.Projects:
+                    _exportProjects(file);
+                    break;
+                case ProjectTabs.BuildConfigOutputs:
+                    _exportBuildConfigOutputs(file);
+                    break;
+                case ProjectTabs.BuildConfigCodeAnalysis:
+                    _exportBuildConfigCodeAnalysis(file);
+                    break;
+                case ProjectTabs.References:
+                    _exportReferences(file);
+                    break;
+            }
+            Process.Start(file);
+        }
+
+        private void _exportProjects(string file)
+        {
+            using (var sr = new StreamWriter(file, false))
+            {
+                sr.WriteLine("\"{0}\"", string.Join("\",\"", new[]
+                                                                 {
+                                                                     "Name",
+                                                                     "Assembly name",
+                                                                     "Default namespace",
+                                                                     "Output type",
+                                                                     "Has pre-build event",
+                                                                     "Has post-build event",
+                                                                     "File name",
+                                                                 }));
+                foreach (Project p in Solution.Projects)
+                {
+                    sr.WriteLine("\"{0}\"", string.Join("\",\"", new[]
+                                                                     {
+                                                                         p.ProjectName,
+                                                                         p.AssemblyName,
+                                                                         p.RootNamespace,
+                                                                         p.OutputType,
+                                                                         p.HasPreBuildEvent.ToString(),
+                                                                         p.HasPostBuildEvent.ToString(),
+                                                                         p.ProjectFilename,
+                                                                     }));
+                }
+            }
+        }
+
+        private void _exportReferences(string file)
+        {
+            using (var sr = new StreamWriter(file, false))
+            {
+                sr.WriteLine("\"{0}\"", string.Join("\",\"", new[]
+                                                                 {
+                                                                     "Reference Name",
+                                                                     "Project Name",
+                                                                     "Include",
+                                                                     "Specific version",
+                                                                     "Copy local",
+                                                                     "Hint path",
+                                                                     "File not found",
+                                                                 }));
+                foreach (Reference r in Solution.DistinctReferences)
+                {
+                    sr.WriteLine("\"{0}\"", string.Join("\",\"", new[]
+                                                                     {
+                                                                         r.Name,
+                                                                         r.Project.ProjectName,
+                                                                         r.Include,
+                                                                         r.SpecificVersion.ToString(),
+                                                                         r.Private.ToString(),
+                                                                         r.RootedHintPath,
+                                                                         (!r.HasFile).ToString(),
+                                                                     }));
+                }
+            }
+        }
+
+        private void _exportBuildConfigOutputs(string file)
+        {
+            using (var sr = new StreamWriter(file, false))
+            {
+                sr.WriteLine("\"{0}\"", string.Join("\",\"", new[]
+                                                                 {
+                                                                     "Project Name",
+                                                                     "Configuration Name",
+                                                                     "Output path (normalized)",
+                                                                     "Output path (actual)",
+                                                                     "Irregular",
+                                                                 }));
+                foreach (BuildConfiguration bc in _projectConfigurations.Where(bc => !bc.IsExcluded))
+                {
+                    sr.WriteLine("\"{0}\"", string.Join("\",\"", new[]
+                                                                     {
+                                                                         bc.Project.ProjectName,
+                                                                         bc.Name,
+                                                                         bc.NormalizedOutputPath,
+                                                                         bc.OutputPath,
+                                                                         bc.Project.IrregularOutputPaths.ToString(),
+                                                                     }));
+                }
+            }
+        }
+
+        private void _exportBuildConfigCodeAnalysis(string file)
+        {
+            using (var sr = new StreamWriter(file, false))
+            {
+                sr.WriteLine("\"{0}\"", string.Join("\",\"", new[]
+                                                                 {
+                                                                     "Project Name",
+                                                                     "Configuration Name",
+                                                                     "Run CA",
+                                                                     "Ruleset file",
+                                                                     "Ruleset file not found",
+                                                                     "Missing elements",
+                                                                 }));
+                foreach (BuildConfiguration bc in _projectConfigurations.Where(bc => !bc.IsExcluded))
+                {
+                    sr.WriteLine("\"{0}\"", string.Join("\",\"", new[]
+                                                                     {
+                                                                         bc.Project.ProjectName,
+                                                                         bc.Name,
+                                                                         bc.RunCodeAnalysis.ToString(),
+                                                                         bc.RootedCodeAnalysisRuleSet,
+                                                                         (!bc.HasCodeAnalysisRuleSetFile).ToString(),
+                                                                         bc.IsMissingElements.ToString(),
+                                                                     }));
+                }
+            }
+        }
 
         private void _saveChanges()
         {
