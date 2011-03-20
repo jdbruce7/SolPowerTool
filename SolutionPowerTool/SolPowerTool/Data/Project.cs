@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Data;
-using System.Windows.Input;
 using System.Xml;
 using SolPowerTool.App.Common;
 
@@ -345,7 +344,12 @@ namespace SolPowerTool.App.Data
             return !IsReadOnly;
         }
 
-       
+        public void Reload()
+        {
+            References.Clear();
+            BuildConfigurations.Clear();
+            _parse();
+        }
 
         #region Nested type: BuildConfigurationSorter
 
@@ -362,12 +366,5 @@ namespace SolPowerTool.App.Data
         }
 
         #endregion
-
-        public void Reload()
-        {
-            References.Clear();
-            BuildConfigurations.Clear();
-            _parse();
-        }
     }
 }

@@ -23,13 +23,13 @@ namespace SolPowerTool.App.ViewModels
         private ObservableCollection<BuildConfigItemFilter> _buildConfigFilters;
         private ICommand _checkoutCommand;
         private ICommand _editProjectFileCommand;
+        private ICommand _fixMissingElementsCommand;
         //private ICommand _filterOutBuildConfigsCommand;
         private bool _isBuildConfigFiltered;
         private ICommand _loadSolutionCommand;
         private ICommand _makeWriteableCommand;
         private ICollectionView _projectConfigsView;
         private IEnumerable<BuildConfiguration> _projectConfigurations;
-        private ICommand _fixMissingElementsCommand;
         private ICommand _saveChangesCommand;
         private ICommand _selectFileCommand;
         private ICommand _selectProjectsCommand;
@@ -46,7 +46,6 @@ namespace SolPowerTool.App.ViewModels
         static MainWindowViewModel()
         {
             _buildConfigCompare = new BuildConfigurationCompare();
-           
         }
 
         public MainWindowViewModel()
@@ -228,7 +227,7 @@ namespace SolPowerTool.App.ViewModels
                 ICollectionView collectionView = CollectionViewSource.GetDefaultView(_solution.Projects);
                 collectionView.SortDescriptions.Add(new SortDescription("ProjectName", ListSortDirection.Ascending));
                 if (_showOnlySelected)
-                    collectionView.Filter = new Predicate<object>(param => !((Project)param).IsSelected);
+                    collectionView.Filter = new Predicate<object>(param => !((Project) param).IsSelected);
                 return collectionView;
             }
         }
@@ -242,7 +241,7 @@ namespace SolPowerTool.App.ViewModels
                 _projectConfigsView = CollectionViewSource.GetDefaultView(_projectConfigurations);
                 if (_projectConfigsView != null)
                 {
-                    _projectConfigsView.Filter = new Predicate<object>(param => !((BuildConfiguration)param).IsExcluded);
+                    _projectConfigsView.Filter = new Predicate<object>(param => !((BuildConfiguration) param).IsExcluded);
                     _projectConfigsView.SortDescriptions.Add(new SortDescription("Project.ProjectName", ListSortDirection.Ascending));
                     _projectConfigsView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                     _projectConfigsView.GroupDescriptions.Add(new PropertyGroupDescription("Project"));
@@ -323,23 +322,23 @@ namespace SolPowerTool.App.ViewModels
                        ?? (_selectProjectsCommand
                            = new RelayCommand<string>(
                                  param =>
-                                 {
-                                     switch (param.ToLower())
                                      {
-                                         case "configurations":
-                                             _selectProjectWithSelectedBuildConfigs();
-                                             break;
-                                         case "selectall":
-                                         case "deselectall":
-                                             foreach (Project project in Solution.Projects)
-                                                 project.IsSelected = param.ToLower() == "selectall";
-                                             break;
-                                         case "invert":
-                                             foreach (Project project in Solution.Projects)
-                                                 project.IsSelected = !project.IsSelected;
-                                             break;
-                                     }
-                                 }));
+                                         switch (param.ToLower())
+                                         {
+                                             case "configurations":
+                                                 _selectProjectWithSelectedBuildConfigs();
+                                                 break;
+                                             case "selectall":
+                                             case "deselectall":
+                                                 foreach (Project project in Solution.Projects)
+                                                     project.IsSelected = param.ToLower() == "selectall";
+                                                 break;
+                                             case "invert":
+                                                 foreach (Project project in Solution.Projects)
+                                                     project.IsSelected = !project.IsSelected;
+                                                 break;
+                                         }
+                                     }));
             }
         }
 
@@ -421,10 +420,6 @@ namespace SolPowerTool.App.ViewModels
             if (SelectedProject != null)
                 TeamFoundationClient.Checkout(SelectedProject.ProjectFilename);
         }
-
-        
-
-       
 
 
         protected override void OnDispose(bool disposing)

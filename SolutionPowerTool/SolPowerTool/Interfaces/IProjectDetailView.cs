@@ -1,11 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SolPowerTool.App.ViewModels;
-
-namespace SolPowerTool.App.Interfaces
+﻿namespace SolPowerTool.App.Interfaces
 {
-    public interface IProjectDetailView:ISolPowerToolView
+    public interface IProjectDetailView : ISolPowerToolView
     {
         IProjectDetailViewModel ViewModel { get; set; }
         void Show();

@@ -7,7 +7,6 @@ using System.Windows.Input;
 using System.Xml;
 using Microsoft.Win32;
 using SolPowerTool.App.Common;
-using SolPowerTool.App.ViewModels;
 
 namespace SolPowerTool.App.Data
 {
@@ -196,11 +195,11 @@ namespace SolPowerTool.App.Data
                 return _previewAssemblyCommand ?? (_previewAssemblyCommand
                                                    = new RelayCommand<object>(
                                                          obj =>
-                                                         {
-                                                             var name = AssemblyLoader.GetAssemblyFullName(RootedHintPath);
-                                                             var msg = string.Format("Name:  {0}\r\n\nPath:  {1}", name.FullName, name.CodeBase);
-                                                             MessageBox.Show(msg, Name, MessageBoxButton.OK, MessageBoxImage.Information);
-                                                         },
+                                                             {
+                                                                 AssemblyName name = AssemblyLoader.GetAssemblyFullName(RootedHintPath);
+                                                                 string msg = string.Format("Name:  {0}\r\n\nPath:  {1}", name.FullName, name.CodeBase);
+                                                                 MessageBox.Show(msg, Name, MessageBoxButton.OK, MessageBoxImage.Information);
+                                                             },
                                                          param => HasFile));
             }
         }

@@ -3,6 +3,7 @@
     //SolPowerTool.App.ViewModels.ControlTabs
     public enum ControlTabs
     {
-        Projects, BuildConfigurations
+        Projects,
+        BuildConfigurations
     }
 }

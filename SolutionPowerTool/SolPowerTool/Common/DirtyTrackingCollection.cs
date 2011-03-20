@@ -8,28 +8,32 @@ namespace SolPowerTool.App.Common
     public class DirtyTrackingCollection<T> : ObservableCollection<T>, IDirtyTracking
         where T : IDirtyTracking
     {
+        #region IDirtyTracking Members
+
         public event EventHandler DirtyChanged;
 
-        protected override void OnCollectionChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        #endregion
+
+        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    foreach (var item in e.NewItems.OfType<T>())
+                    foreach (T item in e.NewItems.OfType<T>())
                         item.DirtyChanged += _dirtyChanged;
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (var item in e.OldItems.OfType<T>())
+                    foreach (T item in e.OldItems.OfType<T>())
                         item.DirtyChanged -= _dirtyChanged;
                     break;
                 case NotifyCollectionChangedAction.Replace:
-                    foreach (var item in e.OldItems.OfType<T>())
+                    foreach (T item in e.OldItems.OfType<T>())
                         item.DirtyChanged -= _dirtyChanged;
-                    foreach (var item in e.NewItems.OfType<T>())
+                    foreach (T item in e.NewItems.OfType<T>())
                         item.DirtyChanged += _dirtyChanged;
                     break;
                 case NotifyCollectionChangedAction.Reset:
-                    foreach (var item in Items)
+                    foreach (T item in Items)
                         item.DirtyChanged -= _dirtyChanged;
                     break;
                 case NotifyCollectionChangedAction.Move:
@@ -39,7 +43,7 @@ namespace SolPowerTool.App.Common
             base.OnCollectionChanged(e);
         }
 
-        void _dirtyChanged(object sender, EventArgs e)
+        private void _dirtyChanged(object sender, EventArgs e)
         {
             if (DirtyChanged != null)
                 DirtyChanged(this, EventArgs.Empty);

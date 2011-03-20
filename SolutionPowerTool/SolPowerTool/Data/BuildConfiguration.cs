@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Media;
 using System.Xml;
 using SolPowerTool.App.Common;
@@ -13,20 +12,24 @@ namespace SolPowerTool.App.Data
     [DebuggerDisplay("BuildConfiguration = {Name}")]
     public class BuildConfiguration : DTOBase
     {
-        private static readonly List<BuildConfiguration> _instances = new List<BuildConfiguration>();
-        private const string CodeAnalysisRuleSetDirectories = @";C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets";
-        private const string CodeAnalysisRuleDirectories = @";C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules";
+        private const string CodeAnalysisRuleSetDirectories =
+            @";C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets";
+
+        private const string CodeAnalysisRuleDirectories =
+            @";C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules";
+
         private const string CodeAnalysisModuleSuppressionsFile = "GlobalSuppressions.cs";
         private const string ErrorReport = "prompt";
+        private static readonly List<BuildConfiguration> _instances = new List<BuildConfiguration>();
 
         private readonly string _realConfiguration;
         private readonly string _realPlatform;
         private string _codeAnalysisRuleSet;
+        private FileInfo _codeAnalysisRuleSetFileInfo;
+        private XmlNode _groupNode;
+        private XmlNamespaceManager _nsmgr;
         private string _outputPath;
         private bool _runCodeAnalysis;
-        XmlNode _groupNode;
-        private XmlNamespaceManager _nsmgr;
-        private FileInfo _codeAnalysisRuleSetFileInfo;
 
         private BuildConfiguration(Project project, string name)
         {
@@ -170,7 +173,7 @@ namespace SolPowerTool.App.Data
                 return null;
 
             string condition = conditionAttr.Value;
-            string[] a = condition.Split(new[] { "==" }, StringSplitOptions.None);
+            string[] a = condition.Split(new[] {"=="}, StringSplitOptions.None);
             if (a.Length != 2)
                 return null;
             if (a[0].Trim() != "'$(Configuration)|$(Platform)'")
@@ -191,6 +194,7 @@ namespace SolPowerTool.App.Data
     <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
          */
+
         private BuildConfiguration _parse(XmlNode groupNode, XmlNamespaceManager nsmgr)
         {
             _groupNode = groupNode;
@@ -319,39 +323,38 @@ namespace SolPowerTool.App.Data
 
             //<CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
             node = _groupNode.SelectSingleNode("root:CodeAnalysisRuleSetDirectories", _nsmgr)
-                ?? _groupNode.AppendChild(_groupNode.OwnerDocument.CreateElement("CodeAnalysisRuleSetDirectories", _nsmgr.LookupNamespace("root")));
+                   ?? _groupNode.AppendChild(_groupNode.OwnerDocument.CreateElement("CodeAnalysisRuleSetDirectories", _nsmgr.LookupNamespace("root")));
             node.InnerText = CodeAnalysisRuleSetDirectories;
 
             //<CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
             node = _groupNode.SelectSingleNode("root:CodeAnalysisRuleDirectories", _nsmgr)
-                ?? _groupNode.AppendChild(_groupNode.OwnerDocument.CreateElement("CodeAnalysisRuleDirectories", _nsmgr.LookupNamespace("root")));
+                   ?? _groupNode.AppendChild(_groupNode.OwnerDocument.CreateElement("CodeAnalysisRuleDirectories", _nsmgr.LookupNamespace("root")));
             node.InnerText = CodeAnalysisRuleDirectories;
 
             //<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
             node = _groupNode.SelectSingleNode("root:CodeAnalysisUseTypeNameInSuppression", _nsmgr)
-                ?? _groupNode.AppendChild(_groupNode.OwnerDocument.CreateElement("CodeAnalysisUseTypeNameInSuppression", _nsmgr.LookupNamespace("root")));
+                   ?? _groupNode.AppendChild(_groupNode.OwnerDocument.CreateElement("CodeAnalysisUseTypeNameInSuppression", _nsmgr.LookupNamespace("root")));
             node.InnerText = "true";
 
             //<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
             node = _groupNode.SelectSingleNode("root:CodeAnalysisModuleSuppressionsFile", _nsmgr)
-               ?? _groupNode.AppendChild(_groupNode.OwnerDocument.CreateElement("CodeAnalysisModuleSuppressionsFile", _nsmgr.LookupNamespace("root")));
+                   ?? _groupNode.AppendChild(_groupNode.OwnerDocument.CreateElement("CodeAnalysisModuleSuppressionsFile", _nsmgr.LookupNamespace("root")));
             node.InnerText = CodeAnalysisModuleSuppressionsFile;
 
             //<ErrorReport>prompt</ErrorReport>
             node = _groupNode.SelectSingleNode("root:ErrorReport", _nsmgr)
-               ?? _groupNode.AppendChild(_groupNode.OwnerDocument.CreateElement("ErrorReport", _nsmgr.LookupNamespace("root")));
+                   ?? _groupNode.AppendChild(_groupNode.OwnerDocument.CreateElement("ErrorReport", _nsmgr.LookupNamespace("root")));
             node.InnerText = ErrorReport;
 
             //<CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
             node = _groupNode.SelectSingleNode("root:CodeAnalysisIgnoreBuiltInRuleSets", _nsmgr)
-              ?? _groupNode.AppendChild(_groupNode.OwnerDocument.CreateElement("CodeAnalysisIgnoreBuiltInRuleSets", _nsmgr.LookupNamespace("root")));
+                   ?? _groupNode.AppendChild(_groupNode.OwnerDocument.CreateElement("CodeAnalysisIgnoreBuiltInRuleSets", _nsmgr.LookupNamespace("root")));
             node.InnerText = "true";
 
             //<CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
             node = _groupNode.SelectSingleNode("root:CodeAnalysisIgnoreBuiltInRules", _nsmgr)
-              ?? _groupNode.AppendChild(_groupNode.OwnerDocument.CreateElement("CodeAnalysisIgnoreBuiltInRules", _nsmgr.LookupNamespace("root")));
+                   ?? _groupNode.AppendChild(_groupNode.OwnerDocument.CreateElement("CodeAnalysisIgnoreBuiltInRules", _nsmgr.LookupNamespace("root")));
             node.InnerText = "true";
-
         }
 
         public static void ResetExclusions()

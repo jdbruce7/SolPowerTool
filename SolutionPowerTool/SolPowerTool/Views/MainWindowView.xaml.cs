@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 using SolPowerTool.App.ViewModels;
 
 namespace SolPowerTool.App.Views
@@ -19,7 +20,7 @@ namespace SolPowerTool.App.Views
             set { DataContext = value; }
         }
 
-        private void DataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (ViewModel.ShowProjectDetailCommand.CanExecute(null))
                 ViewModel.ShowProjectDetailCommand.Execute(null);

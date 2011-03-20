@@ -14,13 +14,13 @@ namespace SolPowerTool.App.Common
         public static AssemblyName GetAssemblyFullName(string assemblyName)
         {
             AppDomain domain = AppDomain.CreateDomain("tempDomain",
-                                          AppDomain.CurrentDomain.Evidence,
-                                          new AppDomainSetup
-                                          {
-                                              ApplicationBase = AppDomain.CurrentDomain.BaseDirectory,
-                                              ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile,
-                                          });
-            AssemblyLoader loader = (AssemblyLoader)domain.CreateInstanceAndUnwrap(typeof(AssemblyLoader).Assembly.FullName, typeof(AssemblyLoader).FullName);
+                                                      AppDomain.CurrentDomain.Evidence,
+                                                      new AppDomainSetup
+                                                          {
+                                                              ApplicationBase = AppDomain.CurrentDomain.BaseDirectory,
+                                                              ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile,
+                                                          });
+            var loader = (AssemblyLoader) domain.CreateInstanceAndUnwrap(typeof (AssemblyLoader).Assembly.FullName, typeof (AssemblyLoader).FullName);
             AssemblyName name = loader._getAssemblyFullName(assemblyName);
             AppDomain.Unload(domain);
             return name;

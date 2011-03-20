@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Windows.Input;
 
 namespace SolPowerTool.App.Common
 {
-    public abstract class DTOBase : PropertyChangedBase , IDirtyTracking, IComparable
+    public abstract class DTOBase : PropertyChangedBase, IDirtyTracking, IComparable
     {
-        public static event EventHandler AnyDirtyChanged;
-        public event EventHandler DirtyChanged;
         private bool _isDirty;
 
         public virtual bool IsDirty
@@ -25,6 +21,14 @@ namespace SolPowerTool.App.Common
                 FireDirtyChanged();
             }
         }
+
+        #region IDirtyTracking Members
+
+        public event EventHandler DirtyChanged;
+
+        #endregion
+
+        public static event EventHandler AnyDirtyChanged;
 
         public void FireDirtyChanged()
         {
@@ -46,6 +50,7 @@ namespace SolPowerTool.App.Common
 
         #endregion
     }
+
     public interface IDirtyTracking
     {
         event EventHandler DirtyChanged;

@@ -7,11 +7,11 @@ using System.Windows;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("SolPowerTool")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Visual Studio 2010 Solution Power Tool")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyCompany("JD Bruce")]
 [assembly: AssemblyProduct("SolPowerTool")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
+[assembly: AssemblyCopyright("Copyright © JD Bruce 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

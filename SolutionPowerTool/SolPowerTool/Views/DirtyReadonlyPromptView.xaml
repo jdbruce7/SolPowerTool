@@ -20,9 +20,12 @@
                             Value="100" />
                 </Style>
             </StackPanel.Resources>
-            <Button Content="Make Writeable" Command="{Binding MakeWriteableCommand}" />
-            <Button Content="Checkout" Command="{Binding CheckoutCommand}"/>
-            <Button Content="Cancel" Command="{Binding CancelCommand}"/>
+            <Button Content="Make Writeable"
+                    Command="{Binding MakeWriteableCommand}" />
+            <Button Content="Checkout"
+                    Command="{Binding CheckoutCommand}" />
+            <Button Content="Cancel"
+                    Command="{Binding CancelCommand}" />
         </StackPanel>
         <ListBox ItemsSource="{Binding Projects}"
                  Margin="10"

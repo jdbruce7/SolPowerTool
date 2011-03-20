@@ -25,16 +25,10 @@ namespace SolPowerTool.App.Data
             Projects = new DirtyTrackingCollection<Project>();
             Projects.DirtyChanged += OnDirtyChanged;
 
-            
+
             _parseSolutionFile();
         }
 
-
-        private void OnDirtyChanged(object sender, EventArgs e)
-        {
-            RaisePropertyChanged(() => IsDirty);
-            FireDirtyChanged();
-        }
 
         public string SolutionFilename { get; private set; }
 
@@ -42,7 +36,6 @@ namespace SolPowerTool.App.Data
 
         public DirtyTrackingCollection<Project> Projects { get; private set; }
 
-       
 
         public string SolutionName
         {
@@ -53,6 +46,30 @@ namespace SolPowerTool.App.Data
         {
             get { return base.IsDirty || Projects.Any(p => p.IsDirty); }
             set { base.IsDirty = value; }
+        }
+
+        public IEnumerable<Reference> DistinctReferences { get; set; }
+
+        public ICollectionView DistinctReferencesView
+        {
+            get
+            {
+                ICollectionView view = CollectionViewSource.GetDefaultView(DistinctReferences);
+                view.GroupDescriptions.Add(new PropertyGroupDescription("Name"));
+                view.SortDescriptions.Add(new SortDescription("Project.ProjectName", ListSortDirection.Ascending));
+                return view;
+            }
+        }
+
+        public IEnumerable<string> DistinctReferencedFiles
+        {
+            get { return DistinctReferences.Select(r => r.Name).OrderBy(s => s); }
+        }
+
+        private void OnDirtyChanged(object sender, EventArgs e)
+        {
+            RaisePropertyChanged(() => IsDirty);
+            FireDirtyChanged();
         }
 
         public override int CompareTo(object obj)
@@ -90,38 +107,16 @@ namespace SolPowerTool.App.Data
                     if (File.Exists(filename))
                     {
                         Project project = Project.Parse(this, filename);
-                        if (Projects.Any(p=>p.ProjectGuid==project.ProjectGuid))
+                        if (Projects.Any(p => p.ProjectGuid == project.ProjectGuid))
                             throw new InvalidOperationException();
                         Projects.Add(project);
                     }
                 }
             }
 
-            DistinctReferences =new ObservableCollection<Reference>(  Projects.SelectMany(p => p.References).OrderBy(r=>r.Name));//.Where(p => p.HasHintPath);
+            DistinctReferences = new ObservableCollection<Reference>(Projects.SelectMany(p => p.References).OrderBy(r => r.Name)); //.Where(p => p.HasHintPath);
 
             IsDirty = false;
         }
-
-        public IEnumerable<Reference> DistinctReferences { get; set; }
-
-        public ICollectionView DistinctReferencesView
-        {
-            get
-            {
-                var view = CollectionViewSource.GetDefaultView(DistinctReferences);
-                view.GroupDescriptions.Add(new PropertyGroupDescription("Name"));
-                view.SortDescriptions.Add(new SortDescription("Project.ProjectName",ListSortDirection.Ascending));
-                return view;
-            }
-        }
-
-        public IEnumerable<string> DistinctReferencedFiles
-        {
-            get
-            {
-                return DistinctReferences.Select(r=>r.Name).OrderBy(s=>s);
-            }
-        }
-
     }
 }

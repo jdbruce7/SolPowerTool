@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace SolPowerTool.App.Common
@@ -9,7 +7,7 @@ namespace SolPowerTool.App.Common
     {
         public static string Esacpe(this string text)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (char c in text)
                 if (" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".IndexOf(c) >= 0)
                     sb.Append(c);

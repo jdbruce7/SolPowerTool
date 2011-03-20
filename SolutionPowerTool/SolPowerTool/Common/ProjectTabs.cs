@@ -3,6 +3,9 @@
     //SolPowerTool.App.ViewModels.ProjectTabs
     public enum ProjectTabs
     {
-        Projects, BuildConfigOutputs, BuildConfigCodeAnalysis, References
+        Projects,
+        BuildConfigOutputs,
+        BuildConfigCodeAnalysis,
+        References
     }
 }

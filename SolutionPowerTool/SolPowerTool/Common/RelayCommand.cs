@@ -8,6 +8,13 @@ namespace SolPowerTool.App.Common
         private readonly Action<T> _action;
         private readonly Func<T, bool> _predicate;
         private bool _lastCanExexute = true;
+
+        public RelayCommand(Action<T> action, Func<T, bool> predicate = null)
+        {
+            _action = action;
+            _predicate = predicate;
+        }
+
         private bool _LastCanExecute
         {
             set
@@ -17,11 +24,6 @@ namespace SolPowerTool.App.Common
                 if (CanExecuteChanged != null)
                     CanExecuteChanged(this, EventArgs.Empty);
             }
-        }
-        public RelayCommand(Action<T> action, Func<T, bool> predicate = null)
-        {
-            _action = action;
-            _predicate = predicate;
         }
 
         #region ICommand Members

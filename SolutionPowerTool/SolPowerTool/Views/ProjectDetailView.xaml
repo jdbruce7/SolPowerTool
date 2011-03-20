@@ -11,10 +11,6 @@
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
-        <!--<Label Content="File:"
-               FontWeight="Bold" />
-        <TextBox Text="{Binding Project.ProjectFilename,Mode=OneWay}"
-                 IsReadOnly="True" />-->
         <Border BorderThickness="7"
                 BorderBrush="LightBlue"
                 CornerRadius="10"
