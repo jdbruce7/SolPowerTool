@@ -1,0 +1,187 @@
+﻿<Window x:Class="SolPowerTool.App.Views.ProjectDetailView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wpf="clr-namespace:Microsoft.Windows.Controls;assembly=WPFToolkit"
+        Title="{Binding Project.ProjectName}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <!--<Label Content="File:"
+               FontWeight="Bold" />
+        <TextBox Text="{Binding Project.ProjectFilename,Mode=OneWay}"
+                 IsReadOnly="True" />-->
+        <Border BorderThickness="7"
+                BorderBrush="LightBlue"
+                CornerRadius="10"
+                Background="LightGray"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Margin="7,7,7,12"
+                Padding="7">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+
+                    <StackPanel Orientation="Vertical">
+                        <Label Content="Project File:"
+                               FontWeight="Bold" />
+                        <TextBox Text="{Binding Project.ProjectFilename,Mode=OneWay}"
+                                 IsReadOnly="True" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical">
+                        <Label Content="Build configurations:"
+                               FontWeight="Bold" />
+                        <wpf:DataGrid AutoGenerateColumns="False"
+                                      ItemsSource="{Binding Project.BuildConfigurationsView}"
+                                      MinHeight="50">
+                            <wpf:DataGrid.Columns>
+
+                                <wpf:DataGridCheckBoxColumn Binding="{Binding IsSelected}"
+                                                            Width="30" />
+                                <!--<wpf:DataGridCheckBoxColumn Header="*"
+                                                                                Width="30"
+                                                                                Binding="{Binding IsDirty,Mode=OneWay}"
+                                                                                IsReadOnly="True"
+                                                                                CellStyle="{StaticResource dirtyColorStyle}" />-->
+                                <wpf:DataGridTextColumn Header="Name"
+                                                        Width="250"
+                                                        IsReadOnly="True"
+                                                        Binding="{Binding Name,Mode=OneWay}" />
+                                <!--<wpf:DataGridTextColumn Header="Real name"
+                                                        Width="250"
+                                                        IsReadOnly="True"
+                                                        Binding="{Binding RealName,Mode=OneWay}" />-->
+                                <wpf:DataGridTextColumn Header="Normalized output path"
+                                                        Width="250"
+                                                        Binding="{Binding NormalizedOutputPath}"
+                                                        CellStyle="{StaticResource dirtyColorStyle}" />
+                                <!--<wpf:DataGridTextColumn Header="Output path"
+                                                        Width="250"
+                                                        Binding="{Binding OutputPath}"
+                                                        CellStyle="{StaticResource dirtyColorStyle}" />-->
+                                <wpf:DataGridCheckBoxColumn Header="CA"
+                                                            Binding="{Binding RunCodeAnalysis}"
+                                                            CellStyle="{StaticResource dirtyColorStyle}" />
+                                <wpf:DataGridTextColumn Header="CA Ruleset"
+                                                        Binding="{Binding RootedCodeAnalysisRuleSet}"
+                                                        CellStyle="{StaticResource problemCodeAnalysisRuleSetColorStyle}" />
+                            </wpf:DataGrid.Columns>
+                        </wpf:DataGrid>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Vertical">
+                            <Label Content="Pre-build event:"
+                                   FontWeight="Bold" />
+                            <TextBox Text="{Binding Project.PreBuildEvent,Mode=OneWay}"
+                                     Width="500"
+                                     Height="100"
+                                     IsReadOnly="True"
+                                     VerticalScrollBarVisibility="Auto"
+                                     HorizontalScrollBarVisibility="Auto" />
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical"
+                                    Margin="7,0,0,0">
+                            <Label Content="Post-build event:"
+                                   FontWeight="Bold" />
+                            <TextBox Text="{Binding Project.PostBuildEvent,Mode=OneWay}"
+                                     Width="500"
+                                     Height="100"
+                                     IsReadOnly="True"
+                                     VerticalScrollBarVisibility="Auto"
+                                     HorizontalScrollBarVisibility="Auto" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical">
+                        <Label Content="References:"
+                               FontWeight="Bold" />
+                        <wpf:DataGrid AutoGenerateColumns="False"
+                                      ItemsSource="{Binding Project.ReferencesView}"
+                                      MinHeight="50">
+                            <wpf:DataGrid.Columns>
+                                <wpf:DataGridCheckBoxColumn Binding="{Binding IsSelected}"
+                                                            Width="30" />
+                                <wpf:DataGridTextColumn Header="Name"
+                                                        Width="150"
+                                                        IsReadOnly="True"
+                                                        Binding="{Binding Name,Mode=OneWay}" />
+                                <wpf:DataGridTextColumn Header="Rooted HintPath"
+                                                        Width="350"
+                                                        CellStyle="{StaticResource problemHintPathColorStyle}"
+                                                        Binding="{Binding RootedHintPath}" />
+                                <wpf:DataGridTemplateColumn>
+                                    <wpf:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Pick"
+                                                    Command="{Binding PickFileCommand}" />
+                                        </DataTemplate>
+                                    </wpf:DataGridTemplateColumn.CellTemplate>
+                                </wpf:DataGridTemplateColumn>
+
+                                <wpf:DataGridTextColumn Header="Version"
+                                                        IsReadOnly="True"
+                                                        Binding="{Binding Version,Mode=OneWay}" />
+                                <wpf:DataGridTextColumn Header="PKT"
+                                                        IsReadOnly="True"
+                                                        Binding="{Binding PublicKeyToken,Mode=OneWay}" />
+                                <wpf:DataGridTemplateColumn Header="Version Fix">
+                                    <wpf:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button Content="Look"
+                                                        Command="{Binding PreviewAssemblyCommand}" />
+                                                <Button Content="Load"
+                                                        Command="{Binding LoadAssemblyCommand}" />
+                                                <Button Content="Remove"
+                                                        Command="{Binding RemoveAssemblyVersionCommand}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </wpf:DataGridTemplateColumn.CellTemplate>
+                                </wpf:DataGridTemplateColumn>
+                                <wpf:DataGridCheckBoxColumn Header="Specific Ver"
+                                                            Width="100"
+                                                            Binding="{Binding SpecificVersion}" />
+                                <wpf:DataGridCheckBoxColumn Header="Copy local"
+                                                            Width="75"
+                                                            Binding="{Binding Private}" />
+                                <wpf:DataGridTextColumn Header="Include"
+                                                        Width="350"
+                                                        IsReadOnly="True"
+                                                        Binding="{Binding Include,Mode=OneWay}" />
+                            </wpf:DataGrid.Columns>
+                        </wpf:DataGrid>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Margin"
+                                        Value="7" />
+                                <Setter Property="Width"
+                                        Value="75" />
+                            </Style>
+                        </StackPanel.Resources>
+                        <Button Content="Reload"
+                                Command="{Binding ReloadCommand}" />
+                        <Button Content="Save"
+                                Command="{Binding SaveCommand}" />
+                        <Button Content="Close"
+                                Command="{Binding CloseCommand}"
+                                IsDefault="True"
+                                IsCancel="True" />
+                    </StackPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+    </Grid>
+</Window>
