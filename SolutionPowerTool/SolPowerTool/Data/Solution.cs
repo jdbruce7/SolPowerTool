@@ -61,6 +61,11 @@ namespace SolPowerTool.App.Data
             }
         }
 
+        public string Name
+        {
+            get { return Path.GetFileNameWithoutExtension(SolutionFilename); }
+        }
+
         private void OnDirtyChanged(object sender, EventArgs e)
         {
             RaisePropertyChanged(() => IsDirty);

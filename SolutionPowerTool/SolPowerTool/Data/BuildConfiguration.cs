@@ -6,20 +6,19 @@ using System.Linq;
 using System.Windows.Media;
 using System.Xml;
 using SolPowerTool.App.Common;
+using SolPowerTool.App.Properties;
 
 namespace SolPowerTool.App.Data
 {
     [DebuggerDisplay("BuildConfiguration = {Name}")]
     public class BuildConfiguration : DTOBase
     {
-        //TODO: Make Code Analysis settings configurable.
-        private const string CodeAnalysisRuleSetDirectories =
+        public const string CodeAnalysisRuleSetDirectories =
             @";C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets";
 
-        private const string CodeAnalysisRuleDirectories =
+        public const string CodeAnalysisRuleDirectories =
             @";C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules";
 
-        private const string CodeAnalysisModuleSuppressionsFile = "GlobalSuppressions.cs";
         private const string ErrorReport = "prompt";
         private static readonly List<BuildConfiguration> _instances = new List<BuildConfiguration>();
 
@@ -246,7 +245,7 @@ namespace SolPowerTool.App.Data
             node = _groupNode.SelectSingleNode("root:CodeAnalysisRuleSetDirectories", _nsmgr);
             if (node != null)
             {
-                if (string.Compare(node.InnerText, CodeAnalysisRuleSetDirectories, true) != 0)
+                if (string.Compare(node.InnerText, Settings.Default.CodeAnalysisRuleSetDirectories, true) != 0)
                     return true;
             }
             else return true;
@@ -255,7 +254,7 @@ namespace SolPowerTool.App.Data
             node = _groupNode.SelectSingleNode("root:CodeAnalysisRuleDirectories", _nsmgr);
             if (node != null)
             {
-                if (string.Compare(node.InnerText, CodeAnalysisRuleDirectories, true) != 0)
+                if (string.Compare(node.InnerText, Settings.Default.CodeAnalysisRuleDirectories, true) != 0)
                     return true;
             }
             else return true;
@@ -274,7 +273,7 @@ namespace SolPowerTool.App.Data
             node = _groupNode.SelectSingleNode("root:CodeAnalysisModuleSuppressionsFile", _nsmgr);
             if (node != null)
             {
-                if (string.Compare(node.InnerText, CodeAnalysisModuleSuppressionsFile, true) != 0)
+                if (string.Compare(node.InnerText, Settings.Default.CodeAnalysisModuleSuppressionsFile, true) != 0)
                     return true;
             }
             else return true;
@@ -325,12 +324,12 @@ namespace SolPowerTool.App.Data
             //<CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
             node = _groupNode.SelectSingleNode("root:CodeAnalysisRuleSetDirectories", _nsmgr)
                    ?? _groupNode.AppendChild(_groupNode.OwnerDocument.CreateElement("CodeAnalysisRuleSetDirectories", _nsmgr.LookupNamespace("root")));
-            node.InnerText = CodeAnalysisRuleSetDirectories;
+            node.InnerText = Settings.Default.CodeAnalysisRuleSetDirectories;
 
             //<CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
             node = _groupNode.SelectSingleNode("root:CodeAnalysisRuleDirectories", _nsmgr)
                    ?? _groupNode.AppendChild(_groupNode.OwnerDocument.CreateElement("CodeAnalysisRuleDirectories", _nsmgr.LookupNamespace("root")));
-            node.InnerText = CodeAnalysisRuleDirectories;
+            node.InnerText = Settings.Default.CodeAnalysisRuleDirectories;
 
             //<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
             node = _groupNode.SelectSingleNode("root:CodeAnalysisUseTypeNameInSuppression", _nsmgr)
@@ -340,7 +339,7 @@ namespace SolPowerTool.App.Data
             //<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
             node = _groupNode.SelectSingleNode("root:CodeAnalysisModuleSuppressionsFile", _nsmgr)
                    ?? _groupNode.AppendChild(_groupNode.OwnerDocument.CreateElement("CodeAnalysisModuleSuppressionsFile", _nsmgr.LookupNamespace("root")));
-            node.InnerText = CodeAnalysisModuleSuppressionsFile;
+            node.InnerText = Settings.Default.CodeAnalysisModuleSuppressionsFile;
 
             //<ErrorReport>prompt</ErrorReport>
             node = _groupNode.SelectSingleNode("root:ErrorReport", _nsmgr)

@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="DirtyReadonlyPromptView"
         Height="400"
+        Icon="/Images/Sledge-Hammer.ico"
         Width="400">
     <DockPanel>
         <Label DockPanel.Dock="Top"

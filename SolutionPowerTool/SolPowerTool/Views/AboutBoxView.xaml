@@ -1,0 +1,164 @@
+﻿<Window x:Class="SolPowerTool.App.Views.AboutBoxView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{Binding Title}"
+        AllowsTransparency="True"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        Background="Transparent"
+        Foreground="White"
+        ResizeMode="NoResize"
+        Icon="/SolPowerTool;component/Images/Sledge-Hammer.ico">
+    <Grid Width="500"
+          Height="320"
+          MouseUp="Grid_MouseUp">
+        <Grid.Resources>
+            <Style x:Key="linkButton"
+                   TargetType="{x:Type Button}">
+                <Setter Property="Foreground"
+                        Value="White" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <TextBlock VerticalAlignment="Bottom"
+                                       Margin="0"
+                                       Height="12"
+                                       TextDecorations="Underline"
+                                       FontFamily="{TemplateBinding FontFamily}"
+                                       Padding="0">
+                                    <ContentPresenter />
+                            </TextBlock>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver"
+                             Value="True">
+                        <Setter Property="Foreground"
+                                Value="LightCoral" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="Foreground"
+                        Value="White" />
+                <Setter Property="FontWeight"
+                        Value="Bold" />
+            </Style>
+        </Grid.Resources>
+        <Grid.Background>
+            <ImageBrush ImageSource="/Images/Splash_500_320.gif" />
+        </Grid.Background>
+        <RichTextBox FontSize="11"
+                     Height="82"
+                     Background="Transparent"
+                     IsDocumentEnabled="True"
+                     Foreground="White"
+                     HorizontalAlignment="Stretch"
+                     Margin="21,85,29,153"
+                     Name="copyrightLabel"
+                     Padding="3"
+                     BorderThickness="0"
+                     IsReadOnly="False"
+                     VerticalAlignment="Center">
+            <FlowDocument>
+                <Paragraph>
+                    Solution Power Tool version 1.0, Copyright © 2011 JD Bruce.
+                    <LineBreak />
+                    <LineBreak />
+                    Solution Power Tool comes with ABSOLUTELY NO WARRANTY; for details click
+                    <Button Style="{StaticResource linkButton}"
+                            Content="here."
+                            Command="{Binding ShowWarrantyCommand}"
+                            Cursor="Hand" />
+                    This is free software, and you are welcome to redistribute it under certain conditions; Click
+                    <Button Style="{StaticResource linkButton}"
+                            Content="here"
+                            Command="{Binding ShowCopyrightCommand}"
+                            Cursor="Hand" />
+                    for details.
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+        <Label Content="Product Name:"
+               Height="28"
+               HorizontalAlignment="Left"
+               Margin="33,176,0,0"
+               VerticalAlignment="Top" />
+        <Label Content="Version:"
+               HorizontalAlignment="Left"
+               Margin="72,192,0,0"
+               Height="28"
+               VerticalAlignment="Top" />
+        <Label Content="Copyright:"
+               HorizontalAlignment="Left"
+               Margin="59,210,0,0"
+               Height="28"
+               VerticalAlignment="Top" />
+        <Label Content="Author:"
+               Height="28"
+               HorizontalAlignment="Left"
+               Margin="75,226,0,0"
+               VerticalAlignment="Top" />
+        <Label Content="Description:"
+               Height="28"
+               HorizontalAlignment="Left"
+               Margin="50,244,0,0"
+               VerticalAlignment="Top" />
+        <TextBlock Height="23"
+                   HorizontalAlignment="Left"
+                   Margin="128,181,0,0"
+                   Text="{Binding ProductName}"
+                   Name="textBlock1"
+                   VerticalAlignment="Top"
+                   Width="343" />
+        <TextBlock Height="23"
+                   HorizontalAlignment="Left"
+                   Margin="128,197,0,0"
+                   Name="textBlock2"
+                   Text="{Binding Version}"
+                   VerticalAlignment="Top"
+                   Width="343" />
+        <TextBlock Height="23"
+                   HorizontalAlignment="Left"
+                   Margin="128,215,0,0"
+                   Name="textBlock3"
+                   Text="{Binding Copyright}"
+                   VerticalAlignment="Top"
+                   Width="343" />
+        <TextBlock Height="23"
+                   HorizontalAlignment="Left"
+                   Margin="128,231,0,0"
+                   Name="textBlock4"
+                   Text="{Binding CompanyName}"
+                   VerticalAlignment="Top"
+                   Width="343" />
+        <TextBlock Height="23"
+                   HorizontalAlignment="Left"
+                   Margin="128,249,0,0"
+                   Name="textBlock5"
+                   Text="{Binding Description}"
+                   VerticalAlignment="Top"
+                   Width="343" />
+
+        <TextBlock Text="Close"
+                   HorizontalAlignment="Left"
+                   Margin="438,291,0,0"
+                   FontSize="13"
+                   FontWeight="Bold"
+                   Name="button1"
+                   VerticalAlignment="Top">
+            <TextBlock.Style>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver"
+                                 Value="True">
+                        <Setter Property="Foreground"
+                                Value="LightCoral" />
+                    </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+    </Grid>
+</Window>

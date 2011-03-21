@@ -5,7 +5,8 @@
         xmlns:osc="clr-namespace:OpenSourceControls;assembly=DockPanelSplitter"
         xmlns:App="clr-namespace:SolPowerTool.App"
         xmlns:Controls="clr-namespace:SolPowerTool.App.Controls"
-        Title="ProjectDetailView2"
+        Title="{Binding Project.ProjectName}"
+        Icon="/Images/Sledge-Hammer.ico"
         MinWidth="640"
         MinHeight="480">
     <Window.Resources>

@@ -5,12 +5,13 @@
         xmlns:wpf="clr-namespace:Microsoft.Windows.Controls;assembly=WPFToolkit"
         xmlns:wpfPrimitives="clr-namespace:Microsoft.Windows.Controls.Primitives;assembly=WPFToolkit"
         xmlns:Controls="clr-namespace:SolPowerTool.App.Controls"
-        Title="MainWindow"
+        Title="{Binding Title}"
         Width="1000"
         Height="700"
         MinWidth="640"
         MinHeight="480"
-        Name="MainWindowElement"
+        Icon="/Images/Sledge-Hammer.ico"
+        Background="LightBlue"
         WindowState="Maximized">
     <Window.Resources>
         <ResourceDictionary>
@@ -417,8 +418,17 @@
                 Content="Export"
                 Height="23"
                 HorizontalAlignment="Left"
-                Margin="118,29,0,0"
+                Margin="118,30,0,0"
                 Name="button7"
+                VerticalAlignment="Top"
+                Width="100"
+                Grid.Row="2" />
+        <Button Command="{Binding AboutBoxCommand}"
+                Content="About"
+                Height="23"
+                HorizontalAlignment="Left"
+                Margin="224,30,0,0"
+                Name="button8"
                 VerticalAlignment="Top"
                 Width="100"
                 Grid.Row="2" />

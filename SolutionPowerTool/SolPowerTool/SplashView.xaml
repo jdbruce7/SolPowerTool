@@ -1,0 +1,95 @@
+﻿<Window x:Class="SolPowerTool.App.SplashView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SplashView"
+        ShowInTaskbar="False"
+        Topmost="True"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        mc:Ignorable="d"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Foreground="White">
+    <Window.Resources>
+        <ResourceDictionary>
+            <Storyboard x:Key="closeStoryBoard">
+                <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                 From="1"
+                                 To="0"
+                                 Duration="0:0:.7"
+                                 FillBehavior="HoldEnd" />
+            </Storyboard>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Width="500"
+          Height="320"
+          MouseUp="Grid_MouseUp">
+        <Grid.Background>
+            <ImageBrush ImageSource="Images\Splash_500_320.gif" />
+        </Grid.Background>
+
+
+        <TextBlock VerticalAlignment="Bottom"
+                   HorizontalAlignment="Left"
+                   Margin="19,0,0,12">
+            <Run>
+                &#169;2011, JD Bruce All rights reserved.
+            </Run>
+        </TextBlock>
+        <Label Content="Loading..."
+               HorizontalAlignment="Stretch"
+               Name="messageLabel"
+               VerticalAlignment="Center"
+               Margin="12,215,10,45"
+               HorizontalContentAlignment="Center"
+               FontSize="13"
+               Padding="3"
+               Foreground="White"
+               Height="60" />
+
+        <StackPanel Orientation="Horizontal"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Right"
+                    Margin="0,0,10,5">
+            <Label Content="Version"
+                   HorizontalAlignment="Left"
+                   Name="label1"
+                   VerticalAlignment="Bottom"
+                   HorizontalContentAlignment="Right"
+                   Foreground="White"
+                   Padding="5,5,0,5" />
+            <Label Content="1.0.0.0"
+                   Name="versionLabel"
+                   HorizontalAlignment="Right"
+                   Foreground="White"
+                   VerticalAlignment="Bottom"
+                   Padding="2,5,5,5" />
+        </StackPanel>
+        <RichTextBox FontSize="13"
+                     Height="105"
+                     Background="Transparent"
+                     Foreground="White"
+                     HorizontalAlignment="Stretch"
+                     Margin="12,104,10,111"
+                     Name="copyrightLabel"
+                     Padding="3"
+                     BorderThickness="0"
+                     IsReadOnly="False"
+                     VerticalAlignment="Center">
+            <FlowDocument>
+                <Paragraph>
+                    Solution Power Tool version 1.0, Copyright © 2011 JD Bruce.
+                    <LineBreak />
+                    <LineBreak />
+                    Solution Power Tool comes with ABSOLUTELY NO WARRANTY; for details click About.
+            	    This is free software, and you are welcome to redistribute it under certain conditions; Click About for details.
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+    </Grid>
+</Window>
+

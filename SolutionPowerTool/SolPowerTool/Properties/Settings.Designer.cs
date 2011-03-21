@@ -70,5 +70,41 @@ namespace SolPowerTool.App.Properties {
                 this["SelectedProjectsTab"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CodeAnalysisRuleDirectories {
+            get {
+                return ((string)(this["CodeAnalysisRuleDirectories"]));
+            }
+            set {
+                this["CodeAnalysisRuleDirectories"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CodeAnalysisRuleSetDirectories {
+            get {
+                return ((string)(this["CodeAnalysisRuleSetDirectories"]));
+            }
+            set {
+                this["CodeAnalysisRuleSetDirectories"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("GlobalSuppressions.cs")]
+        public string CodeAnalysisModuleSuppressionsFile {
+            get {
+                return ((string)(this["CodeAnalysisModuleSuppressionsFile"]));
+            }
+            set {
+                this["CodeAnalysisModuleSuppressionsFile"] = value;
+            }
+        }
     }
 }

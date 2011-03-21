@@ -20,6 +20,7 @@ namespace SolPowerTool.App.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private static readonly BuildConfigurationCompare _buildConfigCompare;
+        private ICommand _aboutBoxCommand;
         private ObservableCollection<BuildConfigItemFilter> _buildConfigFilters;
         private ICommand _checkoutCommand;
         private ICommand _editProjectFileCommand;
@@ -87,6 +88,7 @@ namespace SolPowerTool.App.ViewModels
                                                          Solution = Solution.Parse(SolutionFilename);
                                                          if (_saveChangesCommand != null)
                                                              _saveChangesCommand.CanExecute(null);
+                                                         RaisePropertyChanged(() => Title);
                                                      },
                                                  parem => File.Exists(SolutionFilename)));
             }
@@ -155,6 +157,16 @@ namespace SolPowerTool.App.ViewModels
         public ICommand ExportViewCommand
         {
             get { return _exportViewCommand ?? (_exportViewCommand = new RelayCommand<object>(param => _export())); }
+        }
+
+        public ICommand AboutBoxCommand
+        {
+            get { return _aboutBoxCommand ?? (_aboutBoxCommand = new RelayCommand<object>(param => new AboutBoxViewModel().ShowDialog())); }
+        }
+
+        public string Title
+        {
+            get { return Solution != null ? string.Format("{0} - {1}", Solution.Name, App.APPNAME) : App.APPNAME; }
         }
 
         public Project SelectedProject

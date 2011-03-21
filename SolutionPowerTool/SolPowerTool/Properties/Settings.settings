@@ -14,5 +14,14 @@
     <Setting Name="SelectedProjectsTab" Type="SolPowerTool.App.ViewModels.ProjectTabs" Scope="User">
       <Value Profile="(Default)">Projects</Value>
     </Setting>
+    <Setting Name="CodeAnalysisRuleDirectories" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="CodeAnalysisRuleSetDirectories" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="CodeAnalysisModuleSuppressionsFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">GlobalSuppressions.cs</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
