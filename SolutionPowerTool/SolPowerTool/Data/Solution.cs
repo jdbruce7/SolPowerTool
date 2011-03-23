@@ -87,29 +87,20 @@ namespace SolPowerTool.App.Data
             _solutionDirectoryInfo = new DirectoryInfo(Path.GetDirectoryName(SolutionFilename));
             SolutionDirectoryname = _solutionDirectoryInfo.FullName;
 
-            using (var sr = new StreamReader(SolutionFilename))
+            Elements.Solution solutionElement = Elements.Solution.Parse(SolutionFilename);
+            IEnumerable<Elements.Project> projects = solutionElement.Elements
+                .OfType<Elements.Project>()
+                .Where(p => p.TypeID == Elements.Project.ProjectTypeID);
+
+            foreach (Elements.Project projectElement in projects)
             {
-                while (sr.Peek() >= 0)
+                string filename = Path.Combine(SolutionDirectoryname, projectElement.Location);
+                if (File.Exists(filename))
                 {
-                    string line = sr.ReadLine().Trim();
-                    if (!line.StartsWith("Project"))
-                        continue;
-
-                    string data = line.Substring(line.IndexOf('=') + 1);
-                    string[] segments = data.Split(',');
-                    if (segments.Length < 2)
-                        continue;
-
-                    string projectFilename = segments[1].Trim();
-                    projectFilename = projectFilename.Substring(1, projectFilename.Length - 2);
-                    string filename = Path.Combine(SolutionDirectoryname, projectFilename);
-                    if (File.Exists(filename))
-                    {
-                        Project project = Project.Parse(this, filename);
-                        if (Projects.Any(p => p.ProjectGuid == project.ProjectGuid))
-                            throw new InvalidOperationException();
-                        Projects.Add(project);
-                    }
+                    Project project = Project.Parse(this, filename);
+                    if (Projects.Any(p => p.ProjectGuid == project.ProjectGuid))
+                        throw new InvalidOperationException();
+                    Projects.Add(project);
                 }
             }
 

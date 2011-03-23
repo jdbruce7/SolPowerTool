@@ -116,6 +116,15 @@
     <Compile Include="Common\PropertyChangedBase.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\ViewModelBase.cs" />
+    <Compile Include="Elements\Global.cs" />
+    <Compile Include="Elements\GlobalSection.cs" />
+    <Compile Include="Elements\IElement.cs" />
+    <Compile Include="Elements\Line.cs" />
+    <Compile Include="Elements\Pair.cs" />
+    <Compile Include="Elements\Project.cs" />
+    <Compile Include="Elements\ProjectSection.cs" />
+    <Compile Include="Elements\SectionBase.cs" />
+    <Compile Include="Elements\Solution.cs" />
     <Compile Include="Interfaces\IProjectDetailView.cs" />
     <Compile Include="Interfaces\IProjectDetailViewModel.cs" />
     <Compile Include="Interfaces\ISolPowerToolView.cs" />
