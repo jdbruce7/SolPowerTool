@@ -26,7 +26,9 @@
             <Button Content="Checkout"
                     Command="{Binding CheckoutCommand}" />
             <Button Content="Cancel"
-                    Command="{Binding CancelCommand}" />
+                    Command="{Binding CancelCommand}"
+                    IsDefault="True"
+                    IsCancel="True" />
         </StackPanel>
         <ListBox ItemsSource="{Binding Projects}"
                  Margin="10"

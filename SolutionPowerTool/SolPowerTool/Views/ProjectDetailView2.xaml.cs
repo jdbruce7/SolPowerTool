@@ -1,5 +1,8 @@
 ﻿using System;
+using System.ComponentModel.Composition;
+using System.Windows.Threading;
 using SolPowerTool.App.Interfaces;
+using SolPowerTool.App.Interfaces.Views;
 using SolPowerTool.App.ViewModels;
 
 namespace SolPowerTool.App.Views
@@ -7,6 +10,8 @@ namespace SolPowerTool.App.Views
     /// <summary>
     /// Interaction logic for ProjectDetailView2.xaml
     /// </summary>
+    [PartCreationPolicy(CreationPolicy.NonShared)]
+    [Export(typeof(IProjectDetailView))]
     public partial class ProjectDetailView2 : IProjectDetailView
     {
         public ProjectDetailView2()
@@ -14,20 +19,16 @@ namespace SolPowerTool.App.Views
             InitializeComponent();
         }
 
-        #region IProjectDetailView Members
 
-        public IProjectDetailViewModel ViewModel
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            get { return (ProjectDetailViewModel) DataContext; }
-            set { DataContext = value; }
-        }
-
-        #endregion
-
-        protected override void OnClosed(EventArgs e)
-        {
-            ViewModel.Dispose();
-            base.OnClosed(e);
+            var vm = DataContext as IViewModel;
+            if (vm != null)
+            {
+                Dispatcher.BeginInvoke(new Action(vm.Dispose), DispatcherPriority.ContextIdle);
+                e.Cancel = true;
+            }
+            base.OnClosing(e);
         }
     }
 }

@@ -200,7 +200,6 @@ namespace SolPowerTool.App.Data
             _groupNode = groupNode;
             _nsmgr = nsmgr;
             XmlNode node;
-            XmlNodeList nodes;
 
             //<RunCodeAnalysis>true</RunCodeAnalysis>         
             node = groupNode.SelectSingleNode("root:RunCodeAnalysis", nsmgr);
@@ -381,7 +380,6 @@ namespace SolPowerTool.App.Data
             if (!IsDirty)
                 return;
             XmlNode node;
-            XmlNodeList nodes;
 
             //<RunCodeAnalysis>true</RunCodeAnalysis>         
             node = _groupNode.SelectSingleNode("root:RunCodeAnalysis", _nsmgr);

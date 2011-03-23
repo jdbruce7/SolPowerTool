@@ -8,10 +8,11 @@
         Background="Transparent"
         Foreground="White"
         ResizeMode="NoResize"
+        PreviewKeyUp="Window_KeyUp"
+        PreviewMouseUp="Window_MouseUp"
         Icon="/SolPowerTool;component/Images/Sledge-Hammer.ico">
     <Grid Width="500"
-          Height="320"
-          MouseUp="Grid_MouseUp">
+          Height="320">
         <Grid.Resources>
             <Style x:Key="linkButton"
                    TargetType="{x:Type Button}">

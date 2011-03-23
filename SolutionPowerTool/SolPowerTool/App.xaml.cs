@@ -2,10 +2,11 @@
 using System.Reflection;
 using System.Threading;
 using System.Windows;
+using Microsoft.Practices.ServiceLocation;
 using SolPowerTool.App.Common;
 using SolPowerTool.App.Data;
+using SolPowerTool.App.Interfaces.Shell;
 using SolPowerTool.App.Properties;
-using SolPowerTool.App.ViewModels;
 
 namespace SolPowerTool.App
 {
@@ -15,7 +16,6 @@ namespace SolPowerTool.App
     public partial class App : Application
     {
         public const string APPNAME = "Solution Power Tool";
-        private MainWindowViewModel vm;
 
 
         protected override void OnStartup(StartupEventArgs e)
@@ -27,8 +27,7 @@ namespace SolPowerTool.App
             splash.SetMessage("Loading...");
             splash.Show();
 
-            vm = new MainWindowViewModel();
-            vm.Run();
+            new Bootstrapper().Run();
 
             if (string.IsNullOrWhiteSpace(Settings.Default.CodeAnalysisRuleDirectories))
             {
@@ -51,7 +50,7 @@ namespace SolPowerTool.App
 
         protected override void OnExit(ExitEventArgs e)
         {
-            vm.Dispose();
+            ServiceLocator.Current.GetInstance<IShellViewModel>().Dispose();
             base.OnExit(e);
         }
     }

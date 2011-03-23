@@ -1,49 +1,59 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Input;
 using SolPowerTool.App.Common;
 using SolPowerTool.App.Data;
-using SolPowerTool.App.Interfaces;
-using SolPowerTool.App.Views;
+using SolPowerTool.App.Interfaces.Views;
 
 namespace SolPowerTool.App.ViewModels
 {
-    public class ProjectDetailViewModel : ViewModelBase, IProjectDetailViewModel
+    [PartCreationPolicy(CreationPolicy.NonShared)]
+    public class ProjectDetailViewModel : ViewModelBase<IProjectDetailView>, IProjectDetailViewModel
     {
+        #region Fields
+
         private static readonly List<ProjectDetailViewModel> _instances;
-        private readonly Project _project;
-        private ICommand _closeCommand;
-        private ICommand _reloadCommand;
-        private ICommand _saveCommand;
+        private Project _project;
+
+        #endregion
 
         static ProjectDetailViewModel()
         {
             _instances = new List<ProjectDetailViewModel>();
         }
 
-        private ProjectDetailViewModel(Project project)
+        private ProjectDetailViewModel()
         {
-            View = new ProjectDetailView2 {ViewModel = this};
-            _project = project;
-            _project.DirtyChanged += (sender, args) => _saveCommand.CanExecute(null);
             _instances.Add(this);
-
-            View.Show();
         }
 
-        public IProjectDetailView View { get; private set; }
+        #region Bindings
 
         public Project Project
         {
             get { return _project; }
+            set
+            {
+                if (value == _project) return;
+                _project = value;
+                if (_project != null)
+                    _project.DirtyChanged += (sender, args) => _saveCommand.CanExecute(null);
+            }
         }
+
+        #region Commands
+
+        private ICommand _closeCommand;
+        private ICommand _reloadCommand;
+        private ICommand _saveCommand;
 
         public ICommand ReloadCommand
         {
             get
             {
                 return _reloadCommand ?? (_reloadCommand
-                                          = new RelayCommand<object>(param => Project.Reload()));
+                                          = new RelayCommand<object>(param => { if (Project != null) Project.Reload(); }));
             }
         }
 
@@ -52,7 +62,7 @@ namespace SolPowerTool.App.ViewModels
             get
             {
                 return _saveCommand ?? (_saveCommand
-                                        = new RelayCommand<object>(_save, param => Project.IsDirty));
+                                        = new RelayCommand<object>(_save, param => Project != null && Project.IsDirty));
             }
         }
 
@@ -61,22 +71,35 @@ namespace SolPowerTool.App.ViewModels
             get
             {
                 return _closeCommand ?? (_closeCommand
-                                         = new RelayCommand<object>(param => View.Close()));
+                                         = new RelayCommand<object>(param => Dispose() /*View.Close()*/));
             }
         }
 
-        public static ProjectDetailViewModel ShowProjectDetail(Project project)
+        #endregion
+
+        #endregion
+
+        #region IProjectDetailViewModel Members
+
+        public void Show(Project project)
         {
             ProjectDetailViewModel projectDetailViewModel = _instances.Where(vm => vm._project == project).FirstOrDefault();
             if (projectDetailViewModel == null)
-                projectDetailViewModel = new ProjectDetailViewModel(project);
+            {
+                _project = project;
+                View.Show();
+            }
             else
             {
                 projectDetailViewModel.View.Focus();
                 projectDetailViewModel.View.Activate();
+                Dispose();
             }
-            return projectDetailViewModel;
         }
+
+        #endregion
+
+        #region Overrides
 
         protected override void OnDispose(bool disposing)
         {
@@ -85,22 +108,26 @@ namespace SolPowerTool.App.ViewModels
             base.OnDispose(disposing);
         }
 
+        #endregion
+
+        #region Helpers
+
         private void _save(object param)
         {
             // Check for dirty read-only
-            IEnumerable<Project> projects = new[] {Project};
-            bool allGood = true;
-            var vm = new DirtyReadonlyPromptViewModel(projects);
+            bool allGood;
+            var vm = Container.GetExportedValue<IDirtyReadonlyPromptViewModel>();
+            vm.Projects = new[] {Project};
             vm.ShowDialog();
             switch (vm.Result)
             {
-                case DirtyReadonlyPromptViewModel.Results.MakeWriteable:
-                    allGood = projects.All(project => project.MakeWriteable());
+                case DirtyReadonlyPromptResults.MakeWriteable:
+                    allGood = vm.Projects.All(project => project.MakeWriteable());
                     break;
-                case DirtyReadonlyPromptViewModel.Results.Checkout:
-                    allGood = TeamFoundationClient.Checkout(projects.Select(p => p.ProjectFilename));
+                case DirtyReadonlyPromptResults.Checkout:
+                    allGood = TeamFoundationClient.Checkout(vm.Projects.Select(p => p.ProjectFilename));
                     break;
-                case DirtyReadonlyPromptViewModel.Results.Cancel:
+                case DirtyReadonlyPromptResults.Cancel:
                 default:
                     return;
             }
@@ -109,5 +136,7 @@ namespace SolPowerTool.App.ViewModels
             if (!Project.IsReadOnly)
                 Project.CommitChanges();
         }
+
+        #endregion
     }
 }

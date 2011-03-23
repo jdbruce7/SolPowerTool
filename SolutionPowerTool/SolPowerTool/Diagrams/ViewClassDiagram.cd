@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SolPowerTool.App.Views.AboutBoxView" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="1.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAQAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Views\AboutBoxView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SolPowerTool.App.Views.ShellView" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="6.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>Shell\ShellView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SolPowerTool.App.Views.DirtyReadonlyPromptView" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="8.75" Y="6.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Views\DirtyReadonlyPromptView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SolPowerTool.App.Views.ProjectDetailView" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Views\ProjectDetailView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SolPowerTool.App.Views.ProjectDetailView2" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="3.75" Y="6.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Views\ProjectDetailView2.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="System.Windows.Window" Collapsed="true">
+    <Position X="6.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Interface Name="SolPowerTool.App.Interfaces.IShellView" Collapsed="true">
+    <Position X="1.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\Shell\IShellView.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SolPowerTool.App.Interfaces.IView&lt;TView&gt;" Collapsed="true">
+    <Position X="4.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IView.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SolPowerTool.App.Interfaces.IView" Collapsed="true">
+    <Position X="4.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IView.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SolPowerTool.App.Interfaces.IAboutBoxView" Collapsed="true">
+    <Position X="3.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\Views\IAboutBoxView.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SolPowerTool.App.Interfaces.IDirtyReadonlyPromptView" Collapsed="true">
+    <Position X="5.75" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>Interfaces\Views\IDirtyReadonlyPromptView.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SolPowerTool.App.Interfaces.IProjectDetailView" Collapsed="true">
+    <Position X="8.5" Y="3.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAABAAAAAAAAAAAAEAAAAAAAAAACAAAA=</HashCode>
+      <FileName>Interfaces\Views\IProjectDetailView.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,22 +1,19 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using SolPowerTool.App.Common;
-using SolPowerTool.App.Views;
+using SolPowerTool.App.Interfaces.Views;
 
 namespace SolPowerTool.App.ViewModels
 {
-    public class AboutBoxViewModel
+    [PartCreationPolicy(CreationPolicy.NonShared)]
+    public class AboutBoxViewModel : ViewModelBase<IAboutBoxView>, IAboutBoxViewModel
     {
-        private ICommand _showCopyrightCommand;
-        private ICommand _showWarrantyCommand;
-
         public AboutBoxViewModel()
         {
-            View = new AboutBoxView {ViewModel = this};
-
             Title = String.Format("About {0}", AssemblyTitle);
             ProductName = AssemblyProduct;
             Version = String.Format("Version {0}", AssemblyVersion);
@@ -25,7 +22,7 @@ namespace SolPowerTool.App.ViewModels
             Description = AssemblyDescription;
         }
 
-        public AboutBoxView View { get; private set; }
+        #region Bindings
 
         public string Title { get; private set; }
 
@@ -38,16 +35,6 @@ namespace SolPowerTool.App.ViewModels
         public string CompanyName { get; private set; }
 
         public string Description { get; private set; }
-
-        public ICommand ShowWarrantyCommand
-        {
-            get { return _showWarrantyCommand ?? (_showWarrantyCommand = new RelayCommand<object>(param => { MessageBox.Show("Warranty"); })); }
-        }
-
-        public ICommand ShowCopyrightCommand
-        {
-            get { return _showCopyrightCommand ?? (_showCopyrightCommand = new RelayCommand<object>(param => { MessageBox.Show("Copyright"); })); }
-        }
 
         #region Assembly Attribute Accessors
 
@@ -127,9 +114,32 @@ namespace SolPowerTool.App.ViewModels
 
         #endregion
 
+        #region Commands
+
+        private ICommand _showCopyrightCommand;
+        private ICommand _showWarrantyCommand;
+
+        public ICommand ShowWarrantyCommand
+        {
+            get { return _showWarrantyCommand ?? (_showWarrantyCommand = new RelayCommand<object>(param => { MessageBox.Show("Warranty"); })); }
+        }
+
+        public ICommand ShowCopyrightCommand
+        {
+            get { return _showCopyrightCommand ?? (_showCopyrightCommand = new RelayCommand<object>(param => { MessageBox.Show("Copyright"); })); }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region IAboutBoxViewModel Members
+
         public bool? ShowDialog()
         {
             return View.ShowDialog();
         }
+
+        #endregion
     }
 }

@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access">
+  <Class Name="SolPowerTool.App.ViewModels.AboutBoxViewModel" Collapsed="true">
+    <Position X="0.75" Y="10.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>MIAAQAgBAAAgiEEAAAAAAAGBAAAAAAAAhAAAAAAIAAA=</HashCode>
+      <FileName>ViewModels\AboutBoxViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="System.Object" Collapsed="true">
+    <Position X="6.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="SolPowerTool.App.ViewModels.ProjectDetailViewModel" BaseTypeListCollapsed="true">
+    <Position X="7" Y="10.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAACAAAAAAACAgCEgAAAAEAAAAAEAgAAAEAAA=</HashCode>
+      <FileName>ViewModels\ProjectDetailViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SolPowerTool.App.ViewModels.DirtyReadonlyPromptViewModel">
+    <Position X="10.5" Y="10.75" Width="2.75" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>QCAAAABAAAAAAAAEAAABAAUAAAAAIAAAAAAAAAAAAQA=</HashCode>
+      <FileName>ViewModels\DirtyReadonlyPromptViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SolPowerTool.App.ViewModels.ShellViewModel">
+    <Position X="3.75" Y="10.75" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="SolPowerTool.App.ViewModels.ShellViewModel.BuildConfigItemFilter" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Shell\ShellViewModel.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="SolPowerTool.App.ViewModels.ShellViewModel.BuildConfigurationCompare" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Shell\ShellViewModel.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>ASMAgTDCyDAFIGkAAAIThQIIEkCAJUAQyAAKYCoAOQI=</HashCode>
+      <FileName>Shell\ShellViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SolPowerTool.App.Common.PropertyChangedBase" Collapsed="true">
+    <Position X="6" Y="8" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Common\PropertyChangedBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SolPowerTool.App.Common.ViewModelBase&lt;TView&gt;" Collapsed="true">
+    <Position X="6" Y="9.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQCACAEAQAAAAAAACAgIAABAAAAACAAAAEAAAA=</HashCode>
+      <FileName>Common\ViewModelBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="SolPowerTool.App.Interfaces.IProjectDetailViewModel" Collapsed="true">
+    <Position X="0.5" Y="5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\Views\IProjectDetailViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="System.IDisposable" Collapsed="true">
+    <Position X="5" Y="0.75" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="SolPowerTool.App.Interfaces.IViewModel" Collapsed="true">
+    <Position X="5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SolPowerTool.App.Interfaces.IViewModel&lt;TView&gt;" Collapsed="true">
+    <Position X="5" Y="3.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SolPowerTool.App.Interfaces.IAboutBoxViewModel" Collapsed="true">
+    <Position X="3.25" Y="5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\Views\IAboutBoxViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SolPowerTool.App.Interfaces.IDirtyReadonlyPromptViewModel" Collapsed="true">
+    <Position X="6" Y="5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Interfaces\Views\IDirtyReadonlyPromptViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SolPowerTool.App.Interfaces.IShellViewModel" Collapsed="true">
+    <Position X="9.25" Y="5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\Shell\IShellViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="System.ComponentModel.INotifyPropertyChanged" Collapsed="true">
+    <Position X="8.75" Y="0.75" Width="2" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

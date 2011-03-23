@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SolPowerTool.App.Elements.Solution" Collapsed="true">
+    <Position X="10.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAQAAAAAABAAAAgAAAAAQAAAAA=</HashCode>
+      <FileName>Elements\Solution.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SolPowerTool.App.Elements.Global" Collapsed="true">
+    <Position X="0.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAEAAAAAAAAAABAIAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Elements\Global.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SolPowerTool.App.Elements.GlobalSection" Collapsed="true">
+    <Position X="2.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAEAAAAAAAAAABAIAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Elements\GlobalSection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SolPowerTool.App.Elements.Line" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="8.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAABAAAAAAAAIAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Elements\Line.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.1" />
+  </Class>
+  <Class Name="SolPowerTool.App.Elements.Pair" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="12" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAQEAAAAAAAAAABAIAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Elements\Pair.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SolPowerTool.App.Elements.Project" Collapsed="true">
+    <Position X="4.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgEAAAEAAAAAQEACIAAAAAgABAIAAgAIAAAAAAAAA=</HashCode>
+      <FileName>Elements\Project.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SolPowerTool.App.Elements.ProjectSection" Collapsed="true">
+    <Position X="6.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAEAAAAAAAAAABAIAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Elements\ProjectSection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SolPowerTool.App.Elements.SectionBase" Collapsed="true">
+    <Position X="3.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAEAAAAAQAAAAAABAIAAAAQAgAAAAAAA=</HashCode>
+      <FileName>Elements\SectionBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="System.Object" Collapsed="true">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Interface Name="SolPowerTool.App.Elements.IElement" Collapsed="true">
+    <Position X="2" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Elements\IElement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

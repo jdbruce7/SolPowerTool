@@ -1,22 +1,22 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using SolPowerTool.App.ViewModels;
+using SolPowerTool.App.Interfaces.Shell;
 
-namespace SolPowerTool.App.Views
+namespace SolPowerTool.App.Shell
 {
     /// <summary>
-    /// Interaction logic for MainWindowView.xaml
+    /// Interaction logic for ShellView.xaml
     /// </summary>
-    public partial class MainWindowView : Window
+    public partial class ShellView : Window, IShellView 
     {
-        public MainWindowView()
+        public ShellView()
         {
             InitializeComponent();
         }
 
-        public MainWindowViewModel ViewModel
+        public IShellViewModel ViewModel
         {
-            get { return (MainWindowViewModel) DataContext; }
+            get { return (IShellViewModel) DataContext; }
             set { DataContext = value; }
         }
 

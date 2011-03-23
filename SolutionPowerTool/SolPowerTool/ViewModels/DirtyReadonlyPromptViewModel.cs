@@ -1,38 +1,24 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Windows.Input;
 using SolPowerTool.App.Common;
 using SolPowerTool.App.Data;
-using SolPowerTool.App.Views;
+using SolPowerTool.App.Interfaces.Views;
 
 namespace SolPowerTool.App.ViewModels
 {
-    public class DirtyReadonlyPromptViewModel : ViewModelBase
+    [PartCreationPolicy(CreationPolicy.NonShared)]
+    public class DirtyReadonlyPromptViewModel : ViewModelBase<IDirtyReadonlyPromptView>, IDirtyReadonlyPromptViewModel
     {
-        #region Results enum
+        #region Bindings
 
-        public enum Results
-        {
-            Cancel,
-            MakeWriteable,
-            Checkout
-        }
+        public IEnumerable<Project> Projects { get; set; }
 
-        #endregion
+        #region Commands
 
         private ICommand _cancelCommand;
         private ICommand _checkoutCommand;
         private ICommand _makeWriteableCommand;
-
-        public DirtyReadonlyPromptViewModel(IEnumerable<Project> projects)
-        {
-            Projects = projects;
-            View = new DirtyReadonlyPromptView();
-            View.ViewModel = this;
-        }
-
-        public IEnumerable<Project> Projects { get; private set; }
-
-        public DirtyReadonlyPromptView View { get; set; }
 
         public ICommand MakeWriteableCommand
         {
@@ -40,7 +26,7 @@ namespace SolPowerTool.App.ViewModels
             {
                 return _makeWriteableCommand ?? (_makeWriteableCommand = new RelayCommand<object>(param =>
                                                                                                       {
-                                                                                                          Result = Results.MakeWriteable;
+                                                                                                          Result = DirtyReadonlyPromptResults.MakeWriteable;
                                                                                                           View.Close();
                                                                                                       }));
             }
@@ -52,7 +38,7 @@ namespace SolPowerTool.App.ViewModels
             {
                 return _checkoutCommand ?? (_checkoutCommand = new RelayCommand<object>(param =>
                                                                                             {
-                                                                                                Result = Results.Checkout;
+                                                                                                Result = DirtyReadonlyPromptResults.Checkout;
                                                                                                 View.Close();
                                                                                             }));
             }
@@ -64,17 +50,25 @@ namespace SolPowerTool.App.ViewModels
             {
                 return _cancelCommand ?? (_cancelCommand = new RelayCommand<object>(param =>
                                                                                         {
-                                                                                            Result = Results.Cancel;
+                                                                                            Result = DirtyReadonlyPromptResults.Cancel;
                                                                                             View.Close();
                                                                                         }));
             }
         }
 
-        public Results Result { get; set; }
+        #endregion
 
-        public void ShowDialog()
+        #endregion
+
+        #region IDirtyReadonlyPromptViewModel Members
+
+        public DirtyReadonlyPromptResults Result { get; private set; }
+
+        public bool? ShowDialog()
         {
-            View.ShowDialog();
+            return View.ShowDialog();
         }
+
+        #endregion
     }
 }

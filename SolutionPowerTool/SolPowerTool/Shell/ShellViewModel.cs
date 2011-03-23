@@ -8,52 +8,45 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Microsoft.Win32;
 using Microsoft.Windows.Controls;
 using SolPowerTool.App.Common;
 using SolPowerTool.App.Data;
+using SolPowerTool.App.Interfaces.Shell;
+using SolPowerTool.App.Interfaces.Views;
 using SolPowerTool.App.Properties;
-using SolPowerTool.App.Views;
 
-namespace SolPowerTool.App.ViewModels
+namespace SolPowerTool.App.Shell
 {
-    public class MainWindowViewModel : ViewModelBase
+    public class ShellViewModel : ViewModelBase<IShellView>, IShellViewModel
     {
+        #region Fields
+
         private static readonly BuildConfigurationCompare _buildConfigCompare;
-        private ICommand _aboutBoxCommand;
         private ObservableCollection<BuildConfigItemFilter> _buildConfigFilters;
-        private ICommand _checkoutCommand;
-        private ICommand _editProjectFileCommand;
-        private ICommand _exportViewCommand;
-        private ICommand _fixMissingElementsCommand;
         private bool _isBuildConfigFiltered;
-        private ICommand _loadSolutionCommand;
-        private ICommand _makeWriteableCommand;
+
         private ICollectionView _projectConfigsView;
         private IEnumerable<BuildConfiguration> _projectConfigurations;
-        private ICommand _saveChangesCommand;
-        private ICommand _selectFileCommand;
-        private ICommand _selectProjectsCommand;
         private BuildConfiguration _selectedConfiguration;
         private Project _selectedProject;
         private Reference _selectedReference;
         private DataGridRowDetailsVisibilityMode _showDetails;
         private bool _showOnlySelected;
-        private ICommand _showProjectDetailCommand;
         private Solution _solution;
         private string _solutionFilename;
-        private ICommand _toggleCACommand;
 
-        static MainWindowViewModel()
+        #endregion
+
+
+        static ShellViewModel()
         {
             _buildConfigCompare = new BuildConfigurationCompare();
         }
 
-        public MainWindowViewModel()
+        public ShellViewModel()
         {
-            View = new MainWindowView();
-            View.ViewModel = this;
-
             BuildConfigItemFilter.SelectedChanged += BuildConfigItemFilter_SelectedChanged;
             DTOBase.AnyDirtyChanged += DTOBase_AnyDirtyChanged;
 
@@ -63,106 +56,12 @@ namespace SolPowerTool.App.ViewModels
             SelectedProjectsTab = Settings.Default.SelectedProjectsTab;
 
             if (LoadSolutionCommand.CanExecute(null))
-                LoadSolutionCommand.Execute(null);
+                Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => LoadSolutionCommand.Execute(null)), DispatcherPriority.Background);
         }
 
-        public MainWindowView View { get; private set; }
+        #region Bindings 
+        
 
-        public ICommand SelectFileCommand
-        {
-            get
-            {
-                return _selectFileCommand ??
-                       (_selectFileCommand = new RelayCommand<object>(param => _selectFile()));
-            }
-        }
-
-        public ICommand LoadSolutionCommand
-        {
-            get
-            {
-                return _loadSolutionCommand ??
-                       (_loadSolutionCommand =
-                        new RelayCommand<object>(param =>
-                                                     {
-                                                         Solution = Solution.Parse(SolutionFilename);
-                                                         if (_saveChangesCommand != null)
-                                                             _saveChangesCommand.CanExecute(null);
-                                                         RaisePropertyChanged(() => Title);
-                                                     },
-                                                 parem => File.Exists(SolutionFilename)));
-            }
-        }
-
-        public ICommand MakeWriteableCommand
-        {
-            get
-            {
-                return _makeWriteableCommand ??
-                       (
-                           _makeWriteableCommand =
-                           new RelayCommand<object>(param => { _makeWriteable(); }, param => _canMakeWriteable()));
-            }
-        }
-
-        public ICommand SaveChangesCommand
-        {
-            get
-            {
-                return _saveChangesCommand ??
-                       (
-                           _saveChangesCommand =
-                           new RelayCommand<object>(param => _saveChanges(),
-                                                    param => Solution != null && Solution.IsDirty));
-            }
-        }
-
-        public ICommand EditProjectFileCommand
-        {
-            get
-            {
-                return _editProjectFileCommand
-                       ?? (_editProjectFileCommand
-                           = new RelayCommand<object>(param =>
-                                                          {
-                                                              if (SelectedProject != null)
-                                                                  Process.Start(SelectedProject.ProjectFilename);
-                                                          }));
-            }
-        }
-
-        public ICommand ToggleCACommand
-        {
-            get
-            {
-                return _toggleCACommand ?? (_toggleCACommand = new RelayCommand<object>(
-                                                                   param => _toggleCA()));
-            }
-        }
-
-        public ICommand FixMissingElementsCommand
-        {
-            get
-            {
-                return _fixMissingElementsCommand
-                       ?? (_fixMissingElementsCommand
-                           = new RelayCommand<object>(param =>
-                                                          {
-                                                              foreach (BuildConfiguration configuration in _projectConfigurations.Where(bc => !bc.IsExcluded && bc.RunCodeAnalysis && bc.IsMissingElements))
-                                                                  configuration.IsDirty = true;
-                                                          }));
-            }
-        }
-
-        public ICommand ExportViewCommand
-        {
-            get { return _exportViewCommand ?? (_exportViewCommand = new RelayCommand<object>(param => _export())); }
-        }
-
-        public ICommand AboutBoxCommand
-        {
-            get { return _aboutBoxCommand ?? (_aboutBoxCommand = new RelayCommand<object>(param => new AboutBoxViewModel().ShowDialog())); }
-        }
 
         public string Title
         {
@@ -178,6 +77,7 @@ namespace SolPowerTool.App.ViewModels
                 _selectedProject = value;
                 RaisePropertyChanged(() => SelectedProject);
                 MakeWriteableCommand.CanExecute(null);
+                ShowProjectDetailCommand.CanExecute(null);
             }
         }
 
@@ -208,30 +108,8 @@ namespace SolPowerTool.App.ViewModels
         }
 
         public ControlTabs SelectedControlTab { get; set; }
+
         public ProjectTabs SelectedProjectsTab { get; set; }
-
-        public ICommand CheckOutCommand
-        {
-            get
-            {
-                return _checkoutCommand ??
-                       (
-                           _checkoutCommand = new RelayCommand<object>(param => _checkout()));
-            }
-        }
-
-        public ICommand ShowProjectDetailCommand
-        {
-            get
-            {
-                return _showProjectDetailCommand ??
-                       (
-                           _showProjectDetailCommand = new RelayCommand<object>(
-                                                           param => ProjectDetailViewModel.ShowProjectDetail(SelectedProject),
-                                                           param => SelectedProject != null)
-                       );
-            }
-        }
 
         public ICollectionView ProjectsView
         {
@@ -329,34 +207,6 @@ namespace SolPowerTool.App.ViewModels
             }
         }
 
-        public ICommand SelectProjectsCommand
-        {
-            get
-            {
-                return _selectProjectsCommand
-                       ?? (_selectProjectsCommand
-                           = new RelayCommand<string>(
-                                 param =>
-                                     {
-                                         switch (param.ToLower())
-                                         {
-                                             case "configurations":
-                                                 _selectProjectWithSelectedBuildConfigs();
-                                                 break;
-                                             case "selectall":
-                                             case "deselectall":
-                                                 foreach (Project project in Solution.Projects)
-                                                     project.IsSelected = param.ToLower() == "selectall";
-                                                 break;
-                                             case "invert":
-                                                 foreach (Project project in Solution.Projects)
-                                                     project.IsSelected = !project.IsSelected;
-                                                 break;
-                                         }
-                                     }));
-            }
-        }
-
         public bool IsBuildConfigFiltered
         {
             get { return _isBuildConfigFiltered; }
@@ -368,16 +218,191 @@ namespace SolPowerTool.App.ViewModels
             }
         }
 
-        private void _toggleCA()
+        #region Commands
+
+        private ICommand _aboutBoxCommand;
+        private ICommand _checkoutCommand;
+        private ICommand _editProjectFileCommand;
+        private ICommand _exportViewCommand;
+        private ICommand _fixMissingElementsCommand;
+        private ICommand _loadSolutionCommand;
+        private ICommand _makeWriteableCommand;
+        private ICommand _saveChangesCommand;
+        private ICommand _selectFileCommand;
+        private ICommand _selectProjectsCommand;
+        private ICommand _showProjectDetailCommand;
+        private ICommand _toggleCACommand;
+
+        public ICommand SelectFileCommand
         {
-            IEnumerable<BuildConfiguration> includedConfigs = _projectConfigurations.Where(bc => !bc.IsExcluded);
-            if (includedConfigs.Any(bc => !bc.RunCodeAnalysis))
-                foreach (BuildConfiguration configuration in includedConfigs)
-                    configuration.RunCodeAnalysis = true;
-            else
-                foreach (BuildConfiguration configuration in includedConfigs)
-                    configuration.RunCodeAnalysis = false;
+            get
+            {
+                return _selectFileCommand ??
+                       (_selectFileCommand = new RelayCommand<object>(param => _selectFile()));
+            }
         }
+
+        public ICommand LoadSolutionCommand
+        {
+            get
+            {
+                return _loadSolutionCommand ??
+                       (_loadSolutionCommand =
+                        new RelayCommand<object>(param =>
+                        {
+                            Solution = Solution.Parse(SolutionFilename);
+                            if (_saveChangesCommand != null)
+                                _saveChangesCommand.CanExecute(null);
+                            RaisePropertyChanged(() => Title);
+                        },
+                                                 parem => File.Exists(SolutionFilename)));
+            }
+        }
+
+        public ICommand MakeWriteableCommand
+        {
+            get
+            {
+                return _makeWriteableCommand ??
+                       (
+                           _makeWriteableCommand =
+                           new RelayCommand<object>(param => _makeWriteable(), param => _canMakeWriteable()));
+            }
+        }
+
+        public ICommand SaveChangesCommand
+        {
+            get
+            {
+                return _saveChangesCommand ??
+                       (
+                           _saveChangesCommand =
+                           new RelayCommand<object>(param => _saveChanges(),
+                                                    param => Solution != null && Solution.IsDirty));
+            }
+        }
+
+        public ICommand EditProjectFileCommand
+        {
+            get
+            {
+                return _editProjectFileCommand
+                       ?? (_editProjectFileCommand
+                           = new RelayCommand<object>(param =>
+                           {
+                               if (SelectedProject != null)
+                                   Process.Start(SelectedProject.ProjectFilename);
+                           }));
+            }
+        }
+
+        public ICommand ToggleCACommand
+        {
+            get
+            {
+                return _toggleCACommand ?? (_toggleCACommand = new RelayCommand<object>(
+                                                                   param => _toggleCA()));
+            }
+        }
+
+        public ICommand FixMissingElementsCommand
+        {
+            get
+            {
+                return _fixMissingElementsCommand
+                       ?? (_fixMissingElementsCommand
+                           = new RelayCommand<object>(param =>
+                           {
+                               foreach (BuildConfiguration configuration in _projectConfigurations.Where(bc => !bc.IsExcluded && bc.RunCodeAnalysis && bc.IsMissingElements))
+                                   configuration.IsDirty = true;
+                           }));
+            }
+        }
+
+        public ICommand ExportViewCommand
+        {
+            get { return _exportViewCommand ?? (_exportViewCommand = new RelayCommand<object>(param => _export())); }
+        }
+
+        public ICommand AboutBoxCommand
+        {
+            get { return _aboutBoxCommand ?? (_aboutBoxCommand = new RelayCommand<object>(param => Container.GetExportedValue<IAboutBoxViewModel>().ShowDialog())); }
+        }
+
+        public ICommand CheckOutCommand
+        {
+            get
+            {
+                return _checkoutCommand ??
+                       (
+                           _checkoutCommand = new RelayCommand<object>(param => _checkout()));
+            }
+        }
+
+        public ICommand SelectProjectsCommand
+        {
+            get
+            {
+                return _selectProjectsCommand
+                       ?? (_selectProjectsCommand
+                           = new RelayCommand<string>(
+                                 param =>
+                                 {
+                                     switch (param.ToLower())
+                                     {
+                                         case "configurations":
+                                             _selectProjectWithSelectedBuildConfigs();
+                                             break;
+                                         case "selectall":
+                                         case "deselectall":
+                                             foreach (Project project in Solution.Projects)
+                                                 project.IsSelected = param.ToLower() == "selectall";
+                                             break;
+                                         case "invert":
+                                             foreach (Project project in Solution.Projects)
+                                                 project.IsSelected = !project.IsSelected;
+                                             break;
+                                     }
+                                 }));
+            }
+        }
+
+        public ICommand ShowProjectDetailCommand
+        {
+            get
+            {
+                return _showProjectDetailCommand ??
+                       (
+                           _showProjectDetailCommand = new RelayCommand<object>(
+                                                           param => Container.GetExportedValue<IProjectDetailViewModel>().Show(SelectedProject),
+                                                           param => SelectedProject != null)
+                       );
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Overrides
+
+        protected override void OnDispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Settings.Default.ShowDetails = ShowDetails;
+                Settings.Default.SolutionFilename = SolutionFilename;
+                Settings.Default.SelectedControlTab = SelectedControlTab;
+                Settings.Default.SelectedProjectsTab = SelectedProjectsTab;
+
+                Settings.Default.Save();
+            }
+            base.OnDispose(disposing);
+        }
+
+        #endregion
+
+        #region Listeners
 
         private void _solution_DirtyChanged(object sender, EventArgs e)
         {
@@ -390,6 +415,25 @@ namespace SolPowerTool.App.ViewModels
                 if (_saveChangesCommand != null) _saveChangesCommand.CanExecute(null);
         }
 
+        private void BuildConfigItemFilter_SelectedChanged(object sender, EventArgs e)
+        {
+            _applyBuildConfigFilter();
+        }
+
+        #endregion
+
+        #region Helpers
+
+        private void _toggleCA()
+        {
+            IEnumerable<BuildConfiguration> includedConfigs = _projectConfigurations.Where(bc => !bc.IsExcluded);
+            if (includedConfigs.Any(bc => !bc.RunCodeAnalysis))
+                foreach (BuildConfiguration configuration in includedConfigs)
+                    configuration.RunCodeAnalysis = true;
+            else
+                foreach (BuildConfiguration configuration in includedConfigs)
+                    configuration.RunCodeAnalysis = false;
+        }
 
         private void _export()
         {
@@ -535,17 +579,18 @@ namespace SolPowerTool.App.ViewModels
             bool allGood = true;
             if (projects.Count() > 0)
             {
-                var vm = new DirtyReadonlyPromptViewModel(projects);
+                var vm = Container.GetExportedValue<IDirtyReadonlyPromptViewModel>();
+                vm.Projects = projects;
                 vm.ShowDialog();
                 switch (vm.Result)
                 {
-                    case DirtyReadonlyPromptViewModel.Results.MakeWriteable:
+                    case DirtyReadonlyPromptResults.MakeWriteable:
                         allGood = projects.All(project => project.MakeWriteable());
                         break;
-                    case DirtyReadonlyPromptViewModel.Results.Checkout:
+                    case DirtyReadonlyPromptResults.Checkout:
                         allGood = TeamFoundationClient.Checkout(projects.Select(p => p.ProjectFilename));
                         break;
-                    case DirtyReadonlyPromptViewModel.Results.Cancel:
+                    case DirtyReadonlyPromptResults.Cancel:
                     default:
                         return;
                 }
@@ -574,19 +619,6 @@ namespace SolPowerTool.App.ViewModels
         }
 
 
-        protected override void OnDispose(bool disposing)
-        {
-            if (disposing)
-            {
-                Settings.Default.ShowDetails = ShowDetails;
-                Settings.Default.SolutionFilename = SolutionFilename;
-                Settings.Default.SelectedControlTab = SelectedControlTab;
-                Settings.Default.SelectedProjectsTab = SelectedProjectsTab;
-
-                Settings.Default.Save();
-            }
-            base.OnDispose(disposing);
-        }
 
         private void _populateProjectConfigurations()
         {
@@ -598,11 +630,6 @@ namespace SolPowerTool.App.ViewModels
                                                )
                                          : null;
             RaisePropertyChanged(() => ProjectConfigurationsView);
-        }
-
-        private void BuildConfigItemFilter_SelectedChanged(object sender, EventArgs e)
-        {
-            _applyBuildConfigFilter();
         }
 
         private void _applyBuildConfigFilter()
@@ -627,11 +654,6 @@ namespace SolPowerTool.App.ViewModels
             }
         }
 
-        public void Run()
-        {
-            View.Show();
-        }
-
         private void _selectFile()
         {
             var ofd = new OpenFileDialog();
@@ -647,6 +669,39 @@ namespace SolPowerTool.App.ViewModels
                     _loadSolutionCommand.Execute(null);
             }
         }
+
+        #endregion
+
+        #region Nested type: BuildConfigItemFilter
+
+        public class BuildConfigItemFilter : PropertyChangedBase
+        {
+            private static readonly List<BuildConfigItemFilter> _instances = new List<BuildConfigItemFilter>();
+            private bool _isSelected;
+
+            public BuildConfigItemFilter(BuildConfiguration buildConfiguration)
+            {
+                Name = buildConfiguration.Name;
+                _instances.Add(this);
+            }
+
+            public string Name { get; set; }
+
+            public bool IsSelected
+            {
+                get { return _isSelected; }
+                set
+                {
+                    _isSelected = value;
+                    if (SelectedChanged != null)
+                        SelectedChanged(this, EventArgs.Empty);
+                }
+            }
+
+            public static event EventHandler SelectedChanged;
+        }
+
+        #endregion
 
         #region Nested type: BuildConfigurationCompare
 

@@ -79,7 +79,11 @@
     <Reference Include="DockPanelSplitter">
       <HintPath>..\Lib\DockPanelSplitter.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.Prism, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Practices.Prism.MefExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -102,10 +106,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Bootstrapper.cs" />
     <Compile Include="Common\AssemblyLoader.cs" />
     <Compile Include="Common\DTOBase.cs" />
     <Compile Include="Common\EnumToInt32Converter.cs" />
     <Compile Include="Common\ExceptionHandler.cs" />
+    <Compile Include="Common\Extensions.cs" />
+    <Compile Include="Common\IDirtyTracking.cs" />
     <Compile Include="Common\RowDetailsVisibilityConverter.cs" />
     <Compile Include="Common\StringExt.cs" />
     <Compile Include="Common\TeamFoundationClient.cs" />
@@ -125,13 +132,20 @@
     <Compile Include="Elements\ProjectSection.cs" />
     <Compile Include="Elements\SectionBase.cs" />
     <Compile Include="Elements\Solution.cs" />
-    <Compile Include="Interfaces\IProjectDetailView.cs" />
-    <Compile Include="Interfaces\IProjectDetailViewModel.cs" />
-    <Compile Include="Interfaces\ISolPowerToolView.cs" />
-    <Compile Include="Interfaces\ISolPowerToolViewModel.cs" />
+    <Compile Include="Interfaces\Views\IAboutBoxView.cs" />
+    <Compile Include="Interfaces\Views\IAboutBoxViewModel.cs" />
+    <Compile Include="Interfaces\Views\IDirtyReadonlyPromptView.cs" />
+    <Compile Include="Interfaces\Views\IDirtyReadonlyPromptViewModel.cs" />
+    <Compile Include="Interfaces\Shell\IShellView.cs" />
+    <Compile Include="Interfaces\IView.cs" />
+    <Compile Include="Interfaces\Views\IProjectDetailView.cs" />
+    <Compile Include="Interfaces\Views\IProjectDetailViewModel.cs" />
+    <Compile Include="Interfaces\Shell\IShellViewModel.cs" />
     <Compile Include="Controls\ProjectDetailControl.xaml.cs">
       <DependentUpon>ProjectDetailControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\IViewModel.cs" />
+    <Compile Include="Interfaces\Views\DirtyReadonlyPromptResults.cs" />
     <Compile Include="SplashView.xaml.cs">
       <DependentUpon>SplashView.xaml</DependentUpon>
     </Compile>
@@ -162,7 +176,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MainWindowView.xaml">
+    <Page Include="Shell\ShellView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -172,15 +186,14 @@
     </Compile>
     <Compile Include="Data\Reference.cs" />
     <Compile Include="Data\Solution.cs" />
-    <Compile Include="ViewModels\BuildConfigItemFilter.cs" />
     <Compile Include="Common\ControlTabs.cs" />
     <Compile Include="Common\ProjectTabs.cs" />
     <Compile Include="ViewModels\DirtyReadonlyPromptViewModel.cs" />
     <Compile Include="Views\DirtyReadonlyPromptView.xaml.cs">
       <DependentUpon>DirtyReadonlyPromptView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MainWindowView.xaml.cs">
-      <DependentUpon>MainWindowView.xaml</DependentUpon>
+    <Compile Include="Shell\ShellView.xaml.cs">
+      <DependentUpon>ShellView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\ProjectDetailView.xaml">
@@ -191,13 +204,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Resources.xaml">
+    <Page Include="Resources\Resources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="Shell\ShellViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -218,6 +231,10 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Diagrams\ViewClassDiagram.cd" />
+    <None Include="Diagrams\ViewModelClassDiagram.cd" />
+    <None Include="Diagrams\ElementsClassDiagram.cd" />
+    <None Include="Diagrams\DataClassDiagram.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -236,6 +253,9 @@
   <ItemGroup>
     <Resource Include="Images\Sledge-Hammer-icon.png" />
     <Resource Include="Images\Sledge-Hammer.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interfaces\Common\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

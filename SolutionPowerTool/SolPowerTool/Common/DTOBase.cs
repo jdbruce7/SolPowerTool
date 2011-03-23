@@ -50,9 +50,4 @@ namespace SolPowerTool.App.Common
 
         #endregion
     }
-
-    public interface IDirtyTracking
-    {
-        event EventHandler DirtyChanged;
-    }
 }

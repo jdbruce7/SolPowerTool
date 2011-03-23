@@ -50,9 +50,9 @@ namespace SolPowerTool.App.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Projects")]
-        public global::SolPowerTool.App.ViewModels.ControlTabs SelectedControlTab {
+        public global::SolPowerTool.App.Common.ControlTabs SelectedControlTab {
             get {
-                return ((global::SolPowerTool.App.ViewModels.ControlTabs)(this["SelectedControlTab"]));
+                return ((global::SolPowerTool.App.Common.ControlTabs)(this["SelectedControlTab"]));
             }
             set {
                 this["SelectedControlTab"] = value;
@@ -62,9 +62,9 @@ namespace SolPowerTool.App.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Projects")]
-        public global::SolPowerTool.App.ViewModels.ProjectTabs SelectedProjectsTab {
+        public global::SolPowerTool.App.Common.ProjectTabs SelectedProjectsTab {
             get {
-                return ((global::SolPowerTool.App.ViewModels.ProjectTabs)(this["SelectedProjectsTab"]));
+                return ((global::SolPowerTool.App.Common.ProjectTabs)(this["SelectedProjectsTab"]));
             }
             set {
                 this["SelectedProjectsTab"] = value;
@@ -104,6 +104,15 @@ namespace SolPowerTool.App.Properties {
             }
             set {
                 this["CodeAnalysisModuleSuppressionsFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Modules")]
+        public string ModulesFolder {
+            get {
+                return ((string)(this["ModulesFolder"]));
             }
         }
     }

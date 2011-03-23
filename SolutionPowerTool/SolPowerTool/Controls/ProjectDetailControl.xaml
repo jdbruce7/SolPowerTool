@@ -11,7 +11,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Views/Resources.xaml" />
+                <ResourceDictionary Source="/Resources/Resources.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Style TargetType="{x:Type osc:DockPanelSplitter}">
