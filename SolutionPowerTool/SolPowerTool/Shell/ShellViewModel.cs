@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -16,15 +18,19 @@ using SolPowerTool.App.Data;
 using SolPowerTool.App.Interfaces.Shell;
 using SolPowerTool.App.Interfaces.Views;
 using SolPowerTool.App.Properties;
+using MessageBox = Microsoft.Windows.Controls.MessageBox;
 
 namespace SolPowerTool.App.Shell
 {
+    [PartCreationPolicy(CreationPolicy.Shared)]
+    [Export(typeof (IShellViewModel))]
     public class ShellViewModel : ViewModelBase<IShellView>, IShellViewModel
     {
         #region Fields
 
         private static readonly BuildConfigurationCompare _buildConfigCompare;
         private ObservableCollection<BuildConfigItemFilter> _buildConfigFilters;
+        private string _busyMessage;
         private bool _isBuildConfigFiltered;
 
         private ICollectionView _projectConfigsView;
@@ -38,7 +44,6 @@ namespace SolPowerTool.App.Shell
         private string _solutionFilename;
 
         #endregion
-
 
         static ShellViewModel()
         {
@@ -59,9 +64,7 @@ namespace SolPowerTool.App.Shell
                 Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => LoadSolutionCommand.Execute(null)), DispatcherPriority.Background);
         }
 
-        #region Bindings 
-        
-
+        #region Bindings
 
         public string Title
         {
@@ -218,6 +221,27 @@ namespace SolPowerTool.App.Shell
             }
         }
 
+        public bool IsBusy
+        {
+            get { return _isBusy; }
+            private set
+            {
+                _isBusy = value;
+                RaisePropertyChanged(() => IsBusy);
+            }
+        }
+
+        public string BusyMessage
+        {
+            get { return _busyMessage; }
+            private set
+            {
+                _busyMessage = value;
+                RaisePropertyChanged(() => BusyMessage);
+                IsBusy = true;
+            }
+        }
+
         #region Commands
 
         private ICommand _aboutBoxCommand;
@@ -225,6 +249,7 @@ namespace SolPowerTool.App.Shell
         private ICommand _editProjectFileCommand;
         private ICommand _exportViewCommand;
         private ICommand _fixMissingElementsCommand;
+        private bool _isBusy;
         private ICommand _loadSolutionCommand;
         private ICommand _makeWriteableCommand;
         private ICommand _saveChangesCommand;
@@ -248,14 +273,21 @@ namespace SolPowerTool.App.Shell
             {
                 return _loadSolutionCommand ??
                        (_loadSolutionCommand =
-                        new RelayCommand<object>(param =>
-                        {
-                            Solution = Solution.Parse(SolutionFilename);
-                            if (_saveChangesCommand != null)
-                                _saveChangesCommand.CanExecute(null);
-                            RaisePropertyChanged(() => Title);
-                        },
-                                                 parem => File.Exists(SolutionFilename)));
+                        new RelayCommand<object>(
+                            param =>
+                                {
+                                    BusyMessage = "Loading...";
+                                    ThreadPool.QueueUserWorkItem(
+                                        o =>
+                                            {
+                                                Solution = Solution.Parse(SolutionFilename);
+                                                if (_saveChangesCommand != null)
+                                                    _saveChangesCommand.CanExecute(null);
+                                                RaisePropertyChanged(() => Title);
+                                                IsBusy = false;
+                                            });
+                                },
+                            parem => File.Exists(SolutionFilename)));
             }
         }
 
@@ -289,10 +321,10 @@ namespace SolPowerTool.App.Shell
                 return _editProjectFileCommand
                        ?? (_editProjectFileCommand
                            = new RelayCommand<object>(param =>
-                           {
-                               if (SelectedProject != null)
-                                   Process.Start(SelectedProject.ProjectFilename);
-                           }));
+                                                          {
+                                                              if (SelectedProject != null)
+                                                                  Process.Start(SelectedProject.ProjectFilename);
+                                                          }));
             }
         }
 
@@ -312,10 +344,10 @@ namespace SolPowerTool.App.Shell
                 return _fixMissingElementsCommand
                        ?? (_fixMissingElementsCommand
                            = new RelayCommand<object>(param =>
-                           {
-                               foreach (BuildConfiguration configuration in _projectConfigurations.Where(bc => !bc.IsExcluded && bc.RunCodeAnalysis && bc.IsMissingElements))
-                                   configuration.IsDirty = true;
-                           }));
+                                                          {
+                                                              foreach (BuildConfiguration configuration in _projectConfigurations.Where(bc => !bc.IsExcluded && bc.RunCodeAnalysis && bc.IsMissingElements))
+                                                                  configuration.IsDirty = true;
+                                                          }));
             }
         }
 
@@ -347,23 +379,23 @@ namespace SolPowerTool.App.Shell
                        ?? (_selectProjectsCommand
                            = new RelayCommand<string>(
                                  param =>
-                                 {
-                                     switch (param.ToLower())
                                      {
-                                         case "configurations":
-                                             _selectProjectWithSelectedBuildConfigs();
-                                             break;
-                                         case "selectall":
-                                         case "deselectall":
-                                             foreach (Project project in Solution.Projects)
-                                                 project.IsSelected = param.ToLower() == "selectall";
-                                             break;
-                                         case "invert":
-                                             foreach (Project project in Solution.Projects)
-                                                 project.IsSelected = !project.IsSelected;
-                                             break;
-                                     }
-                                 }));
+                                         switch (param.ToLower())
+                                         {
+                                             case "configurations":
+                                                 _selectProjectWithSelectedBuildConfigs();
+                                                 break;
+                                             case "selectall":
+                                             case "deselectall":
+                                                 foreach (Project project in Solution.Projects)
+                                                     project.IsSelected = param.ToLower() == "selectall";
+                                                 break;
+                                             case "invert":
+                                                 foreach (Project project in Solution.Projects)
+                                                     project.IsSelected = !project.IsSelected;
+                                                 break;
+                                         }
+                                     }));
             }
         }
 
@@ -437,6 +469,7 @@ namespace SolPowerTool.App.Shell
 
         private void _export()
         {
+            BusyMessage = "Exporting...";
             string file = Path.GetTempFileName();
             File.Delete(file);
             file = file + ".csv";
@@ -456,6 +489,7 @@ namespace SolPowerTool.App.Shell
                     break;
             }
             Process.Start(file);
+            IsBusy = false;
         }
 
         private void _exportProjects(string file)
@@ -599,6 +633,8 @@ namespace SolPowerTool.App.Shell
                 project.CommitChanges();
             if (Solution.IsDirty)
                 MessageBox.Show("Not all changes were saved.", App.APPNAME, MessageBoxButton.OK, MessageBoxImage.Error);
+            else
+                MessageBox.Show("Chagnes saved.", App.APPNAME, MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private bool _canMakeWriteable()
@@ -617,7 +653,6 @@ namespace SolPowerTool.App.Shell
             if (SelectedProject != null)
                 TeamFoundationClient.Checkout(SelectedProject.ProjectFilename);
         }
-
 
 
         private void _populateProjectConfigurations()

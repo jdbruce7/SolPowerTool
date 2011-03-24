@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Permissions;
 using System.Windows.Data;
 using System.Xml;
 using SolPowerTool.App.Common;
@@ -11,7 +12,7 @@ using SolPowerTool.App.Common;
 namespace SolPowerTool.App.Data
 {
     [DebuggerDisplay("Project = {ProjectName}")]
-    public class Project : DTOBase
+    public class Project : DTOBase, IDisposable
     {
         private static readonly List<Project> _instances = new List<Project>();
         private static IEnumerable<string> _filterOut;
@@ -164,7 +165,7 @@ namespace SolPowerTool.App.Data
             {
                 ICollectionView collectionView = CollectionViewSource.GetDefaultView(BuildConfigurations);
                 collectionView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-                collectionView.Filter = new Predicate<object>(param => !((BuildConfiguration) param).IsExcluded);
+                collectionView.Filter = new Predicate<object>(param => !((BuildConfiguration)param).IsExcluded);
                 return collectionView;
             }
         }
@@ -214,6 +215,8 @@ namespace SolPowerTool.App.Data
             return ProjectName.CompareTo(target.ProjectName);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        [FileIOPermission(SecurityAction.LinkDemand, Unrestricted = true)]
         public static Project Parse(Solution solution, string projectFilename)
         {
             var project = new Project(solution, projectFilename);
@@ -325,6 +328,29 @@ namespace SolPowerTool.App.Data
         public override string ToString()
         {
             return ProjectName;
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <filterpriority>2</filterpriority>
+        [FileIOPermission(SecurityAction.LinkDemand, Unrestricted = true)]
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_fileWatcher != null)
+                {
+                    _fileWatcher.Changed -= _fileWatcher_Changed;
+                    _fileWatcher.Dispose();
+                }
+            }
         }
 
         private static void _filterChanged()

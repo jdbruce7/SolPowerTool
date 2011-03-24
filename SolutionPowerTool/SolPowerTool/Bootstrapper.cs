@@ -25,6 +25,7 @@ namespace SolPowerTool.App
             return directoryModuleCatalog;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         protected override CompositionContainer CreateContainer()
         {
             var catalog = new AggregateCatalog(

@@ -9,7 +9,6 @@ using SolPowerTool.App.Shell;
 
 namespace SolPowerTool.App.Interfaces.Shell
 {
-    [InheritedExport]
     public interface IShellViewModel : IViewModel<IShellView>
     {
         ICommand ShowProjectDetailCommand { get; }
@@ -38,5 +37,7 @@ namespace SolPowerTool.App.Interfaces.Shell
         ICommand AboutBoxCommand { get; }
         ICommand CheckOutCommand { get; }
         ICommand SelectProjectsCommand { get; }
+        bool IsBusy { get; }
+        string BusyMessage { get; }
     }
 }

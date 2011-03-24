@@ -2,10 +2,11 @@
 using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Windows.Threading;
 
 namespace SolPowerTool.App.Common
 {
-    public abstract class PropertyChangedBase : INotifyPropertyChanged
+    public abstract class PropertyChangedBase : DispatcherObject, INotifyPropertyChanged
     {
         #region INotifyPropertyChanged Members
 

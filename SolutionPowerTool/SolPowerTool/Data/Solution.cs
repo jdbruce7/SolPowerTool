@@ -5,13 +5,14 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Permissions;
 using System.Windows.Data;
 using SolPowerTool.App.Common;
 
 namespace SolPowerTool.App.Data
 {
     [DebuggerDisplay("Solution = {SolutionName}")]
-    public class Solution : DTOBase
+    public sealed class Solution : DTOBase
     {
         private readonly FileInfo _solutionFileInfo;
         private DirectoryInfo _solutionDirectoryInfo;
@@ -24,9 +25,6 @@ namespace SolPowerTool.App.Data
 
             Projects = new DirtyTrackingCollection<Project>();
             Projects.DirtyChanged += OnDirtyChanged;
-
-
-            _parseSolutionFile();
         }
 
 
@@ -77,9 +75,12 @@ namespace SolPowerTool.App.Data
             throw new NotSupportedException();
         }
 
+        [FileIOPermission(SecurityAction.LinkDemand, Unrestricted = true)]
         public static Solution Parse(string solutionFilename)
         {
-            return new Solution(solutionFilename);
+            var solution = new Solution(solutionFilename);
+            solution._parseSolutionFile();
+            return solution;
         }
 
         private void _parseSolutionFile()

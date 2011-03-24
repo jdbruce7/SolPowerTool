@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel.Composition;
+using System.Windows;
 using System.Windows.Input;
 using SolPowerTool.App.Interfaces.Shell;
 
@@ -7,6 +8,8 @@ namespace SolPowerTool.App.Shell
     /// <summary>
     /// Interaction logic for ShellView.xaml
     /// </summary>
+    [PartCreationPolicy(CreationPolicy.Shared)]
+    [Export(typeof(IShellView))]
     public partial class ShellView : Window, IShellView 
     {
         public ShellView()

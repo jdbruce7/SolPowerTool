@@ -1,3 +1,97 @@
 ﻿<Application x:Class="SolPowerTool.App.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" />
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:wpfExt="clr-namespace:Microsoft.Windows.Controls;assembly=WPFToolkit.Extended"
+             xmlns:vsm="clr-namespace:System.Windows;assembly=WPFToolkit"
+             xmlns:pf="clr-namespace:System.Windows;assembly=PresentationFramework">
+    <Application.Resources>
+        <SolidColorBrush x:Key="MyButtonHoverBrush"
+                         Color="OrangeRed" />
+        <SolidColorBrush x:Key="MyButtonPressedBrush"
+                         Color="Red" />
+        <SolidColorBrush x:Key="MyControlButtonBrush"
+                         Color="Maroon" />
+
+        <Style x:Key="MyCloseButtonStyle"
+               TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <vsm:VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <vsm:VisualState x:Name="Normal" />
+                                    <vsm:VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                                           Duration="00:00:00.0010000"
+                                                                           Storyboard.TargetName="Background"
+                                                                           Storyboard.TargetProperty="(Border.Background)">
+                                                <DiscreteObjectKeyFrame KeyTime="00:00:00"
+                                                                        Value="{StaticResource MyButtonHoverBrush}"></DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </vsm:VisualState>
+                                    <vsm:VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                                           Duration="00:00:00.0010000"
+                                                                           Storyboard.TargetName="Background"
+                                                                           Storyboard.TargetProperty="(Border.Background)">
+                                                <DiscreteObjectKeyFrame KeyTime="00:00:00"
+                                                                        Value="{StaticResource MyButtonPressedBrush}"></DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </vsm:VisualState>
+                                </VisualStateGroup>
+                            </vsm:VisualStateManager.VisualStateGroups>
+                            <Border x:Name="Background"
+                                    CornerRadius="0,0,2,0"
+                                    Background="{StaticResource MyControlButtonBrush}">
+                                <Border Margin="1,0,1,1"
+                                        BorderBrush="#59FFFFFF"
+                                        BorderThickness="1"
+                                        CornerRadius="0,0,1,0" />
+                            </Border>
+                            <ContentPresenter x:Name="contentPresenter"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}" />
+                            <Path x:Name="path"
+                                  Fill="White"
+                                  Margin="0,0,0,1"
+                                  Visibility="Collapsed"
+                                  Height="6"
+                                  Width="7"
+                                  Stretch="Fill"
+                                  Opacity="1"
+                                  Data="M 2,6 C2,6 3,6 3,6 3,6 3,5 3,5 3,5 4,5 4,5 4,5 4,6 4,6 4,6 5,6 5,6 5,6 7,6 7,6 7,6 7,5 7,5 7,5 6,5 6,5 6,5 6,4 6,4 6,4 5,4 5,4 5,4 5,2 5,2 5,2 6,2 6,2 6,2 6,1 6,1 6,1 7,1 7,1 7,1 7,0 7,0 7,0 5,0 5,0 5,0 4,0 4,0 4,0 4,1 4,1 4,1 3,1 3,1 3,1 3,0 3,0 3,0 2,0 2,0 2,0 0,0 0,0 0,0 0,1 0,1 0,1 1,1 1,1 1,1 1,2 1,2 1,2 2,2 2,2 2,2 2,4 2,4 2,4 1,4 1,4 1,4 1,5 1,5 1,5 0,5 0,5 0,5 0,6 0,6 0,6 2,6 2,6 z" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Style TargetType="{x:Type wpfExt:MessageBox}">
+            <Setter Property="Background"
+                    Value="LightBlue" />
+            <Setter Property="Foreground"
+                    Value="Blue" />
+            <Setter Property="BorderBrush"
+                    Value="Blue" />
+            <Setter Property="CaptionForeground"
+                    Value="White" />
+            <Setter Property="WindowBorderBrush"
+                    Value="Black" />
+            <Setter Property="WindowBackground"
+                    Value="DarkBlue" />
+            <!--<Setter Property="WindowOpacity"
+                    Value="0.3" />-->
+            <Setter Property="CloseButtonStyle"
+                    Value="{StaticResource MyCloseButtonStyle}" />
+        </Style>
+
+    </Application.Resources>
+</Application>

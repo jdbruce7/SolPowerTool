@@ -4,10 +4,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Permissions;
 using System.Windows;
 
 namespace SolPowerTool.App.Common
 {
+    [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
     public static class TeamFoundationClient
     {
         private static readonly string TF_EXE;
