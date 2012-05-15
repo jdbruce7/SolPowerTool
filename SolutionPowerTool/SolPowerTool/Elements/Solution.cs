@@ -25,7 +25,10 @@ namespace SolPowerTool.App.Elements
 
         private void _parse(StreamReader sr)
         {
-            string line = sr.ReadLine();
+
+            string line = null;
+            while (string.IsNullOrWhiteSpace(line))
+                line = sr.ReadLine();
             if (string.Compare(line, SOLUTION_FILE_HEADER, StringComparison.InvariantCulture) != 0)
                 throw new InvalidOperationException("This does not appear to be a " + SOLUTION_FILE_HEADER);
             Elements.Add(Line.Parse(line, sr));
