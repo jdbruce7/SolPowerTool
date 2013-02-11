@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace SolPowerTool.App.Elements
 {
     internal class Solution
     {
-        private const string SOLUTION_FILE_HEADER = "Microsoft Visual Studio Solution File, Format Version 11.00";
+        private const string SOLUTION_FILE_HEADER = "Microsoft Visual Studio Solution File, Format Version ";
 
         private Solution()
         {
@@ -25,12 +26,19 @@ namespace SolPowerTool.App.Elements
 
         private void _parse(StreamReader sr)
         {
-
             string line = null;
             while (string.IsNullOrWhiteSpace(line))
                 line = sr.ReadLine();
-            if (string.Compare(line, SOLUTION_FILE_HEADER, StringComparison.InvariantCulture) != 0)
+            if (!line.StartsWith(SOLUTION_FILE_HEADER, true, CultureInfo.InvariantCulture))
                 throw new InvalidOperationException("This does not appear to be a " + SOLUTION_FILE_HEADER);
+
+            var verS = line.Substring(SOLUTION_FILE_HEADER.Length);
+            double ver;
+            if (!double.TryParse(verS, out ver))
+                throw new InvalidOperationException("Cannot determine version of the file: " + verS);
+
+            if (ver < 11.0 || ver > 12.0)
+                throw new InvalidOperationException("This solution version is not supported: " + verS);
             Elements.Add(Line.Parse(line, sr));
             while (sr.Peek() >= 0)
             {
