@@ -6,6 +6,7 @@
         xmlns:wpfPrimitives="clr-namespace:Microsoft.Windows.Controls.Primitives;assembly=WPFToolkit"
         xmlns:Controls="clr-namespace:SolPowerTool.App.Controls"
         xmlns:wpfExt="clr-namespace:Microsoft.Windows.Controls;assembly=WPFToolkit.Extended"
+        xmlns:data="clr-namespace:SolPowerTool.App.Data"
         Title="{Binding Title}"
         Width="1000"
         Height="700"
@@ -378,14 +379,16 @@
                                                         Binding="{Binding PublicKeyToken,Mode=OneWay}" />
                                 <wpf:DataGridTemplateColumn Header="Version Fix">
                                     <wpf:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
+                                        <DataTemplate DataType="{x:Type data:Reference}">
                                             <StackPanel Orientation="Horizontal">
                                                 <Button Content="Look"
                                                         Command="{Binding PreviewAssemblyCommand}" />
-                                                <Button Content="Load"
+                                                <Button Content="Set"
                                                         Command="{Binding LoadAssemblyCommand}" />
-                                                <Button Content="Remove"
+                                                <Button Content="Remove Ver"
                                                         Command="{Binding RemoveAssemblyVersionCommand}" />
+                                                <Button Content="Remove Inc"
+                                                        Command="{Binding RemoveAssemblyIncludeCommand}" />
                                             </StackPanel>
                                         </DataTemplate>
                                     </wpf:DataGridTemplateColumn.CellTemplate>

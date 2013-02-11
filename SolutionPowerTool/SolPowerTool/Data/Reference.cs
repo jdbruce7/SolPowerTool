@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
@@ -30,6 +31,7 @@ namespace SolPowerTool.App.Data
         private ICommand _removeAssemblyVersionCommand;
         private bool _specificVersion;
         private Version _version;
+        private ICommand _removeAssemblyIncludeCommand;
 
         private Reference(Project project)
         {
@@ -195,11 +197,11 @@ namespace SolPowerTool.App.Data
                 return _previewAssemblyCommand ?? (_previewAssemblyCommand
                                                    = new RelayCommand<object>(
                                                          obj =>
-                                                             {
-                                                                 AssemblyName name = AssemblyLoader.GetAssemblyFullName(RootedHintPath);
-                                                                 string msg = string.Format("Name:  {0}\r\n\nPath:  {1}", name.FullName, name.CodeBase);
-                                                                 MessageBox.Show(msg, Name, MessageBoxButton.OK, MessageBoxImage.Information);
-                                                             },
+                                                         {
+                                                             AssemblyName name = AssemblyLoader.GetAssemblyFullName(RootedHintPath);
+                                                             string msg = string.Format("Name:  {0}\r\n\nPath:  {1}", name.FullName, name.CodeBase);
+                                                             MessageBox.Show(msg, Name, MessageBoxButton.OK, MessageBoxImage.Information);
+                                                         },
                                                          param => HasFile));
             }
         }
@@ -214,10 +216,24 @@ namespace SolPowerTool.App.Data
             }
         }
 
+        public ICommand RemoveAssemblyIncludeCommand
+        {
+            get { return _removeAssemblyIncludeCommand ?? (_removeAssemblyIncludeCommand = new RelayCommand<object>(param => { Include = Name; })); }
+        }
+
         public ICommand RemoveAssemblyVersionCommand
         {
-            get { return _removeAssemblyVersionCommand ?? (_removeAssemblyVersionCommand = new RelayCommand<object>(param => { Include = Name; })); }
+            get
+            {
+                return _removeAssemblyVersionCommand ?? (_removeAssemblyVersionCommand = new RelayCommand<object>(param =>
+                    {
+                        string[] keyvalues = Include.Split(',');
+                        Include = string.Join(",", keyvalues.Where(s => !s.TrimStart().ToLower().StartsWith("version=")));
+                        SpecificVersion = false;
+                    }, param => HasFile));
+            }
         }
+
 
 
         public ICommand PickFileCommand
