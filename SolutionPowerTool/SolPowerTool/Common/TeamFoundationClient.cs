@@ -12,6 +12,8 @@ namespace SolPowerTool.App.Common
     [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
     public static class TeamFoundationClient
     {
+        private const string TFS_2010 = @"Microsoft Visual Studio 10.0\Common7\IDE\TF.exe";
+        private const string TFS_2012 = @"Microsoft Visual Studio 11.0\Common7\IDE\TF.exe";
         private static readonly string TF_EXE;
 
         #region Cmd file definitions
@@ -70,14 +72,23 @@ SET SCRIPT_ERR=0
 
         static TeamFoundationClient()
         {
-            TF_EXE = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-                @"Microsoft Visual Studio 10.0\Common7\IDE\TF.exe");
+            TF_EXE = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), TFS_2012);
+            if (File.Exists(TF_EXE))
+                return;
+            TF_EXE = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), TFS_2012);
+            if (File.Exists(TF_EXE))
+                return;
+            TF_EXE = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), TFS_2010);
+            if (File.Exists(TF_EXE))
+                return;
+            TF_EXE = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), TFS_2010);
+            if (File.Exists(TF_EXE))
+                return;
         }
 
         public static bool Checkout(string file)
         {
-            return Checkout(new[] {file});
+            return Checkout(new[] { file });
         }
 
         public static bool Checkout(IEnumerable<string> files)

@@ -18,7 +18,7 @@ using SolPowerTool.App.Data;
 using SolPowerTool.App.Interfaces.Shell;
 using SolPowerTool.App.Interfaces.Views;
 using SolPowerTool.App.Properties;
-using MessageBox = Microsoft.Windows.Controls.MessageBox;
+using MessageBox = System.Windows.MessageBox;
 
 namespace SolPowerTool.App.Shell
 {
