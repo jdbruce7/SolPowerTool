@@ -4,9 +4,13 @@
         xmlns:osc="clr-namespace:OpenSourceControls;assembly=DockPanelSplitter"
         xmlns:wpf="clr-namespace:Microsoft.Windows.Controls;assembly=WPFToolkit"
         xmlns:wpfPrimitives="clr-namespace:Microsoft.Windows.Controls.Primitives;assembly=WPFToolkit"
-        xmlns:Controls="clr-namespace:SolPowerTool.App.Controls"
+        xmlns:controls="clr-namespace:SolPowerTool.App.Controls"
         xmlns:wpfExt="clr-namespace:Microsoft.Windows.Controls;assembly=WPFToolkit.Extended"
         xmlns:data="clr-namespace:SolPowerTool.App.Data"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:shell="clr-namespace:SolPowerTool.App.Shell"
+        xmlns:viewModels="clr-namespace:SolPowerTool.App.ViewModels"
         Title="{Binding Title}"
         Width="1000"
         Height="700"
@@ -14,7 +18,9 @@
         MinHeight="480"
         Icon="/Images/Sledge-Hammer.ico"
         Background="LightBlue"
-        WindowState="Maximized">
+        WindowState="Maximized"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=shell:ShellViewModel}">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -100,34 +106,32 @@
                         </StackPanel.Resources>
 
                         <StackPanel Margin="5">
+                            <StackPanel.Resources>
+                                <Style TargetType="{x:Type Button}"
+                                       BasedOn="{StaticResource {x:Type Button}}">
+                                    <Setter Property="Height"
+                                            Value="23" />
+                                    <Setter Property="Width"
+                                            Value="75" />
+                                    <Setter Property="HorizontalAlignment"
+                                            Value="Left" />
+                                    <Setter Property="VerticalAlignment"
+                                            Value="Top" />
+                                </Style>
+                            </StackPanel.Resources>
                             <CheckBox Content="Show only selected"
-                                      IsChecked="{Binding ShowOnlySelected}"
-                                      VerticalAlignment="Top"
-                                      HorizontalAlignment="Left" />
+                                      IsChecked="{Binding ShowOnlySelected}" />
                             <Button Content="Select all"
-                                    Height="23"
-                                    Name="button3"
-                                    Width="75"
                                     Command="{Binding SelectProjectsCommand}"
-                                    CommandParameter="SelectAll"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top" />
+                                    CommandParameter="SelectAll" />
                             <Button Content="Deselect all"
-                                    Height="23"
-                                    HorizontalAlignment="Left"
-                                    Name="button4"
                                     Command="{Binding SelectProjectsCommand}"
-                                    CommandParameter="DeselectAll"
-                                    VerticalAlignment="Top"
-                                    Width="75" />
+                                    CommandParameter="DeselectAll" />
                             <Button Command="{Binding SelectProjectsCommand}"
                                     CommandParameter="Invert"
-                                    Content="Invert"
-                                    Height="23"
-                                    HorizontalAlignment="Left"
-                                    Name="button5"
-                                    VerticalAlignment="Top"
-                                    Width="75" />
+                                    Content="Invert" />
+                            <Button Command="{Binding UpgradeProjectsCommand}"
+                                    Content="Upgrade" />
                         </StackPanel>
                         <StackPanel Margin="5">
                             <Label Content="Show Details:" />
@@ -191,10 +195,11 @@
                                       RowDetailsVisibilityMode="{Binding ShowDetails}"
                                       SelectedItem="{Binding SelectedProject}"
                                       ContextMenu="{StaticResource ProjectContextMenu}"
-                                      MouseDoubleClick="DataGrid_MouseDoubleClick">
+                                      MouseDoubleClick="DataGrid_MouseDoubleClick"
+                                      d:DataContext="{d:DesignInstance Type=data:Project}">
                             <wpf:DataGrid.RowDetailsTemplate>
                                 <DataTemplate>
-                                    <Controls:ProjectDetailControl DataContext="{Binding}"
+                                    <controls:ProjectDetailControl DataContext="{Binding}"
                                                                    MaxHeight="400" />
                                 </DataTemplate>
                             </wpf:DataGrid.RowDetailsTemplate>
@@ -211,6 +216,8 @@
                                 <wpf:DataGridTextColumn Header="Assembly"
                                                         Binding="{Binding AssemblyName}"
                                                         CellStyle="{StaticResource dirtyColorStyle}" />
+                                <wpf:DataGridTextColumn Header="Framework version"
+                                                        Binding="{Binding TargetFrameworkVersion}" />
                                 <wpf:DataGridTextColumn Header="Namespace"
                                                         Binding="{Binding RootNamespace}"
                                                         CellStyle="{StaticResource dirtyColorStyle}" />

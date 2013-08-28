@@ -23,7 +23,7 @@ using MessageBox = System.Windows.MessageBox;
 namespace SolPowerTool.App.Shell
 {
     [PartCreationPolicy(CreationPolicy.Shared)]
-    [Export(typeof (IShellViewModel))]
+    [Export(typeof(IShellViewModel))]
     public class ShellViewModel : ViewModelBase<IShellView>, IShellViewModel
     {
         #region Fields
@@ -123,7 +123,7 @@ namespace SolPowerTool.App.Shell
                 ICollectionView collectionView = CollectionViewSource.GetDefaultView(_solution.Projects);
                 collectionView.SortDescriptions.Add(new SortDescription("ProjectName", ListSortDirection.Ascending));
                 if (_showOnlySelected)
-                    collectionView.Filter = new Predicate<object>(param => !((Project) param).IsSelected);
+                    collectionView.Filter = new Predicate<object>(param => !((Project)param).IsSelected);
                 return collectionView;
             }
         }
@@ -137,7 +137,7 @@ namespace SolPowerTool.App.Shell
                 _projectConfigsView = CollectionViewSource.GetDefaultView(_projectConfigurations);
                 if (_projectConfigsView != null)
                 {
-                    _projectConfigsView.Filter = new Predicate<object>(param => !((BuildConfiguration) param).IsExcluded);
+                    _projectConfigsView.Filter = new Predicate<object>(param => !((BuildConfiguration)param).IsExcluded);
                     _projectConfigsView.SortDescriptions.Add(new SortDescription("Project.ProjectName", ListSortDirection.Ascending));
                     _projectConfigsView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                     _projectConfigsView.GroupDescriptions.Add(new PropertyGroupDescription("Project"));
@@ -275,18 +275,18 @@ namespace SolPowerTool.App.Shell
                        (_loadSolutionCommand =
                         new RelayCommand<object>(
                             param =>
-                                {
-                                    BusyMessage = "Loading...";
-                                    ThreadPool.QueueUserWorkItem(
-                                        o =>
-                                            {
-                                                Solution = Solution.Parse(SolutionFilename);
-                                                if (_saveChangesCommand != null)
-                                                    _saveChangesCommand.CanExecute(null);
-                                                RaisePropertyChanged(() => Title);
-                                                IsBusy = false;
-                                            });
-                                },
+                            {
+                                BusyMessage = "Loading...";
+                                ThreadPool.QueueUserWorkItem(
+                                    o =>
+                                    {
+                                        Solution = Solution.Parse(SolutionFilename);
+                                        if (_saveChangesCommand != null)
+                                            _saveChangesCommand.CanExecute(null);
+                                        RaisePropertyChanged(() => Title);
+                                        IsBusy = false;
+                                    });
+                            },
                             parem => File.Exists(SolutionFilename)));
             }
         }
@@ -379,23 +379,23 @@ namespace SolPowerTool.App.Shell
                        ?? (_selectProjectsCommand
                            = new RelayCommand<string>(
                                  param =>
+                                 {
+                                     switch (param.ToLower())
                                      {
-                                         switch (param.ToLower())
-                                         {
-                                             case "configurations":
-                                                 _selectProjectWithSelectedBuildConfigs();
-                                                 break;
-                                             case "selectall":
-                                             case "deselectall":
-                                                 foreach (Project project in Solution.Projects)
-                                                     project.IsSelected = param.ToLower() == "selectall";
-                                                 break;
-                                             case "invert":
-                                                 foreach (Project project in Solution.Projects)
-                                                     project.IsSelected = !project.IsSelected;
-                                                 break;
-                                         }
-                                     }));
+                                         case "configurations":
+                                             _selectProjectWithSelectedBuildConfigs();
+                                             break;
+                                         case "selectall":
+                                         case "deselectall":
+                                             foreach (Project project in Solution.Projects)
+                                                 project.IsSelected = param.ToLower() == "selectall";
+                                             break;
+                                         case "invert":
+                                             foreach (Project project in Solution.Projects)
+                                                 project.IsSelected = !project.IsSelected;
+                                             break;
+                                     }
+                                 }));
             }
         }
 
@@ -410,6 +410,17 @@ namespace SolPowerTool.App.Shell
                                                            param => SelectedProject != null)
                        );
             }
+        }
+
+        public ICommand UpgradeProjectsCommand
+        {
+            get { return new RelayCommand(_upgradeProjects); }
+        }
+
+        private void _upgradeProjects()
+        {
+            foreach (var project in _solution.Projects.Where(project => project.IsSelected && project.TargetFrameworkVersion != "v4.5"))
+                project.TargetFrameworkVersion = "v4.5";
         }
 
         #endregion

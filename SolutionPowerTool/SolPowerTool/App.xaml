@@ -19,7 +19,7 @@
                     <ControlTemplate TargetType="Button">
                         <Grid>
                             <vsm:VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
+                                <vsm:VisualStateGroup x:Name="CommonStates">
                                     <vsm:VisualState x:Name="Normal" />
                                     <vsm:VisualState x:Name="MouseOver">
                                         <Storyboard>
@@ -43,7 +43,7 @@
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </vsm:VisualState>
-                                </VisualStateGroup>
+                                </vsm:VisualStateGroup>
                             </vsm:VisualStateManager.VisualStateGroups>
                             <Border x:Name="Background"
                                     CornerRadius="0,0,2,0"

@@ -5,9 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:osc="clr-namespace:OpenSourceControls;assembly=DockPanelSplitter"
              xmlns:wpf="clr-namespace:Microsoft.Windows.Controls;assembly=WPFToolkit"
+             xmlns:data="clr-namespace:SolPowerTool.App.Data"
              mc:Ignorable="d"
              d:DesignWidth="640"
-             d:DesignHeight="480">
+             d:DesignHeight="480"
+             d:DataContext="{d:DesignInstance Type=data:Project}">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -68,6 +70,12 @@
                             <Label Content="Output type:"
                                    FontWeight="Bold" />
                             <TextBox Text="{Binding OutputType,Mode=OneWay}"
+                                     IsReadOnly="True" />
+                        </StackPanel>
+                        <StackPanel Margin="7,0,0,0">
+                            <Label Content="Framework version:"
+                                   FontWeight="Bold" />
+                            <TextBox Text="{Binding TargetFrameworkVersion}"
                                      IsReadOnly="True" />
                         </StackPanel>
                     </StackPanel>

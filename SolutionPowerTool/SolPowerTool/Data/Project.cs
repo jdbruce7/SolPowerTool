@@ -26,6 +26,7 @@ namespace SolPowerTool.App.Data
         private XmlNamespaceManager _nsmgr;
         private string _rootNamespace;
         private XmlDocument _xmlDocument;
+        private string _targetFrameworkVersion;
 
         private Project(Solution solution, string projectFilename)
         {
@@ -135,7 +136,18 @@ namespace SolPowerTool.App.Data
             }
         }
 
-        public string TargetFrameworkVersion { get; private set; }
+        [DirtyTracking]
+        public string TargetFrameworkVersion
+        {
+            get { return _targetFrameworkVersion; }
+            set
+            {
+                if (value == _targetFrameworkVersion)
+                    return;
+                _targetFrameworkVersion = value;
+                RaisePropertyChanged(() => TargetFrameworkVersion);
+            }
+        }
 
         public bool IrregularOutputPaths
         {
@@ -304,15 +316,41 @@ namespace SolPowerTool.App.Data
         public void CommitChanges()
         {
             XmlElement root = _xmlDocument.DocumentElement;
-            XmlNode firstPropertyGroup = root.SelectSingleNode("//root:Project/root:PropertyGroup[1]", _nsmgr);
-
+            XmlNode firstPropertyGroup = root.SelectSingleNode("//root:Project/root:PropertyGroup[not(@Condition)]",
+                                                              _nsmgr);
             // Save Project general properties
+            if (firstPropertyGroup == null)
+                throw new InvalidOperationException("Couldn't find correct property group.");
             XmlNode node = firstPropertyGroup.SelectSingleNode("root:RootNamespace", _nsmgr);
             if (node != null)
                 node.InnerText = RootNamespace;
             node = firstPropertyGroup.SelectSingleNode("root:AssemblyName", _nsmgr);
             if (node != null)
                 node.InnerText = AssemblyName;
+
+            node = firstPropertyGroup.SelectSingleNode("root:TargetFrameworkVersion", _nsmgr);
+            bool upgrade;
+            if (node != null)
+                if (node.InnerText != TargetFrameworkVersion)
+                {
+                    node.InnerText = TargetFrameworkVersion;
+                    upgrade = true;
+                    XmlNodeList list = root.SelectNodes("//root:Project/root:PropertyGroup[(@Condition)]",
+                                                        _nsmgr);
+                    if (list != null)
+                    {
+                        foreach (XmlNode propertyNode in list)
+                        {
+                            node = propertyNode.SelectSingleNode("root:Prefer32Bit", _nsmgr);
+                            if (node != null) continue;
+                            node = root.OwnerDocument.CreateElement("Prefer32Bit", _nsmgr.LookupNamespace("root"));
+                            node.InnerText = "false";
+                            propertyNode.AppendChild(node);
+                        }
+                    }
+                }
+
+
 
             foreach (BuildConfiguration buildConfiguration in BuildConfigurations)
                 buildConfiguration.CommitChanges();
