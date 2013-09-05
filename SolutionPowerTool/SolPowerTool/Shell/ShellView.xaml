@@ -132,6 +132,8 @@
                                     Content="Invert" />
                             <Button Command="{Binding UpgradeProjectsCommand}"
                                     Content="Upgrade" />
+                            <Button Command="{Binding DowngradeProjectsCommand}"
+                                    Content="Downgrade" />
                         </StackPanel>
                         <StackPanel Margin="5">
                             <Label Content="Show Details:" />

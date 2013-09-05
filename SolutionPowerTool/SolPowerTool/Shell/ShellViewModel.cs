@@ -423,6 +423,17 @@ namespace SolPowerTool.App.Shell
                 project.TargetFrameworkVersion = "v4.5";
         }
 
+        public ICommand DowngradeProjectsCommand
+        {
+            get { return new RelayCommand(_downgradeProejcts); }
+        }
+
+        private void _downgradeProejcts()
+        {
+            foreach (var project in _solution.Projects.Where(project => project.IsSelected && project.TargetFrameworkVersion != "v4.0"))
+                project.TargetFrameworkVersion = "v4.0";
+        }
+
         #endregion
 
         #endregion

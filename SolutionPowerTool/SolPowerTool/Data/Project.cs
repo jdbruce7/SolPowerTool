@@ -333,19 +333,38 @@ namespace SolPowerTool.App.Data
             if (node != null)
                 if (node.InnerText != TargetFrameworkVersion)
                 {
-                    node.InnerText = TargetFrameworkVersion;
-                    upgrade = true;
-                    XmlNodeList list = root.SelectNodes("//root:Project/root:PropertyGroup[(@Condition)]",
-                                                        _nsmgr);
-                    if (list != null)
+                    if (TargetFrameworkVersion == "v4.5")
                     {
-                        foreach (XmlNode propertyNode in list)
+                        node.InnerText = TargetFrameworkVersion;
+                        upgrade = true;
+                        XmlNodeList list = root.SelectNodes("//root:Project/root:PropertyGroup[(@Condition)]",
+                                                            _nsmgr);
+                        if (list != null)
                         {
-                            node = propertyNode.SelectSingleNode("root:Prefer32Bit", _nsmgr);
-                            if (node != null) continue;
-                            node = root.OwnerDocument.CreateElement("Prefer32Bit", _nsmgr.LookupNamespace("root"));
-                            node.InnerText = "false";
-                            propertyNode.AppendChild(node);
+                            foreach (XmlNode propertyNode in list)
+                            {
+                                node = propertyNode.SelectSingleNode("root:Prefer32Bit", _nsmgr);
+                                if (node != null) continue;
+                                node = root.OwnerDocument.CreateElement("Prefer32Bit", _nsmgr.LookupNamespace("root"));
+                                node.InnerText = "false";
+                                propertyNode.AppendChild(node);
+                            }
+                        }
+                    }
+                    else if (TargetFrameworkVersion == "v4.0")
+                    {
+                        node.InnerText = TargetFrameworkVersion;
+                        upgrade = true;
+                        XmlNodeList list = root.SelectNodes("//root:Project/root:PropertyGroup[(@Condition)]",
+                                                            _nsmgr);
+                        if (list != null)
+                        {
+                            foreach (XmlNode propertyNode in list)
+                            {
+                                node = propertyNode.SelectSingleNode("root:Prefer32Bit", _nsmgr);
+                                if (node == null) continue;
+                                propertyNode.RemoveChild(node);
+                            }
                         }
                     }
                 }
