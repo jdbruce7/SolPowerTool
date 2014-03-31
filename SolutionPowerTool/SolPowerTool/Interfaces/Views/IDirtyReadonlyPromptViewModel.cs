@@ -9,11 +9,10 @@ namespace SolPowerTool.App.Interfaces.Views
     public interface IDirtyReadonlyPromptViewModel : IViewModel<IDirtyReadonlyPromptView>
     {
         DirtyReadonlyPromptResults Result { get; }
-        IEnumerable<Project> Projects { get; set; }
+        IEnumerable<IFileAction> Projects { get; set; }
         ICommand MakeWriteableCommand { get; }
         ICommand CheckoutCommand { get; }
         ICommand CancelCommand { get; }
         bool? ShowDialog();
     }
-
 }

@@ -8,11 +8,12 @@ using System.Security.Permissions;
 using System.Windows.Data;
 using System.Xml;
 using SolPowerTool.App.Common;
+using SolPowerTool.App.Interfaces.Views;
 
 namespace SolPowerTool.App.Data
 {
     [DebuggerDisplay("Project = {ProjectName}")]
-    public class Project : DTOBase, IDisposable
+    public class Project : DTOBase, IDisposable, IFileAction
     {
         private static readonly List<Project> _instances = new List<Project>();
         private static IEnumerable<string> _filterOut;
@@ -27,6 +28,8 @@ namespace SolPowerTool.App.Data
         private string _rootNamespace;
         private XmlDocument _xmlDocument;
         private string _targetFrameworkVersion;
+        private bool _hasMissingProjectReferences;
+        private bool _hasIncorrectProjectReferenceGuids;
 
         private Project(Solution solution, string projectFilename)
         {
@@ -40,6 +43,8 @@ namespace SolPowerTool.App.Data
             References = new DirtyTrackingCollection<Reference>();
             References.DirtyChanged += OnDirtyChanged;
 
+            ProjectReferences = new DirtyTrackingCollection<ProjectReference>();
+            ProjectReferences.DirtyChanged += OnDirtyChanged;
 
             _instances.Add(this);
 
@@ -49,12 +54,24 @@ namespace SolPowerTool.App.Data
 
         public DirtyTrackingCollection<Reference> References { get; private set; }
 
+        public DirtyTrackingCollection<ProjectReference> ProjectReferences { get; private set; }
+
         public ICollectionView ReferencesView
         {
             get
             {
                 ICollectionView collectionView = CollectionViewSource.GetDefaultView(References);
                 collectionView.SortDescriptions.Add(new SortDescription("Include", ListSortDirection.Ascending));
+                return collectionView;
+            }
+        }
+
+        public ICollectionView ProjectReferencesView
+        {
+            get
+            {
+                ICollectionView collectionView = CollectionViewSource.GetDefaultView(ProjectReferences);
+                collectionView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                 return collectionView;
             }
         }
@@ -202,6 +219,26 @@ namespace SolPowerTool.App.Data
             set { base.IsDirty = value; }
         }
 
+        public bool HasMissingProjectReferences
+        {
+            get { return _hasMissingProjectReferences; }
+            set
+            {
+                _hasMissingProjectReferences = value;
+                RaisePropertyChanged(() => HasMissingProjectReferences);
+            }
+        }
+
+        public bool HasIncorrectProjectReferenceGuids
+        {
+            get { return _hasIncorrectProjectReferenceGuids; }
+            set
+            {
+                _hasIncorrectProjectReferenceGuids = value;
+                RaisePropertyChanged(() => HasIncorrectProjectReferenceGuids);
+            }
+        }
+
         private void OnDirtyChanged(object sender, EventArgs e)
         {
             RaisePropertyChanged(() => IsDirty);
@@ -292,7 +329,7 @@ namespace SolPowerTool.App.Data
             XmlNodeList nodes = root.SelectNodes("//root:Project/root:PropertyGroup[@Condition]", nsmgr);
             if (nodes != null)
             {
-                var sorter = new BuildConfigurationSorter();
+                //var sorter = new BuildConfigurationSorter();
                 foreach (XmlNode node2 in nodes)
                 {
                     BuildConfiguration configuration = BuildConfiguration.Parse(this, node2, nsmgr);
@@ -303,11 +340,22 @@ namespace SolPowerTool.App.Data
 
             // References
             nodes = root.SelectNodes("//root:Project/root:ItemGroup/root:Reference", nsmgr);
+            Debug.Assert(nodes != null, "nodes != null");
             foreach (XmlNode node2 in nodes)
             {
                 Reference reference = Reference.Parse(this, node2, nsmgr);
                 if (reference != null)
                     References.Add(reference);
+            }
+
+            // Project References
+            nodes = root.SelectNodes("//root:Project/root:ItemGroup/root:ProjectReference", nsmgr);
+            Debug.Assert(nodes != null, "nodes != null");
+            foreach (XmlNode node2 in nodes)
+            {
+                ProjectReference projectReference = ProjectReference.Parse(this, node2, nsmgr);
+                if (projectReference != null)
+                    ProjectReferences.Add(projectReference);
             }
 
             IsDirty = false;
@@ -426,9 +474,13 @@ namespace SolPowerTool.App.Data
             return !IsReadOnly;
         }
 
+        public string Filename { get { return ProjectFilename; } }
+
+
         public void Reload()
         {
             References.Clear();
+            ProjectReferences.Clear();
             BuildConfigurations.Clear();
             _parse();
         }

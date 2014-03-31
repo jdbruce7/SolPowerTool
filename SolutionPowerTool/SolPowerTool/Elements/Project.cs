@@ -25,31 +25,17 @@ namespace SolPowerTool.App.Elements
         public string ProjectGuidString
         {
             get { return Values[2]; }
-            set
-            {
-                if (value == Values[2])
-                    return;
-                Values[2] = value;
-                Guid guid;
-                if (Guid.TryParse(value, out guid))
-                    _projectGuid = guid;
-                else
-                    _projectGuid = null;
-            }
         }
 
-        public Guid? ProjectGuid
+        public Guid ProjectGuid
         {
-            get { return _projectGuid; }
-            set
+            get
             {
-                if (value == _projectGuid)
-                    return;
-                _projectGuid = value;
-                if (_projectGuid.HasValue)
-                    Values[2] = string.Format("\"{0:B}\"", _projectGuid.Value);
-                else
-                    Values[2] = string.Empty;
+                if (Values[2] == null) return default(Guid);
+                if (_projectGuid.HasValue) return _projectGuid.Value;
+                Guid id;
+                _projectGuid = Guid.TryParse(Values[2], out id) ? id : default(Guid);
+                return _projectGuid.Value;
             }
         }
 

@@ -12,7 +12,7 @@ namespace SolPowerTool.App.ViewModels
     {
         #region Bindings
 
-        public IEnumerable<Project> Projects { get; set; }
+        public IEnumerable<IFileAction> Projects { get; set; }
 
         #region Commands
 

@@ -130,10 +130,12 @@
     <Compile Include="Data\BuildConfiguration.cs" />
     <Compile Include="Common\DirtyTrackingAttribute.cs" />
     <Compile Include="Common\DirtyTrackingCollection.cs" />
+    <Compile Include="Data\Folder.cs" />
     <Compile Include="Data\Project.cs" />
     <Compile Include="Common\PropertyChangedBase.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\ViewModelBase.cs" />
+    <Compile Include="Data\ProjectReference.cs" />
     <Compile Include="Elements\Global.cs" />
     <Compile Include="Elements\GlobalSection.cs" />
     <Compile Include="Elements\IElement.cs" />
@@ -149,6 +151,7 @@
     <Compile Include="Interfaces\Views\IDirtyReadonlyPromptViewModel.cs" />
     <Compile Include="Interfaces\Shell\IShellView.cs" />
     <Compile Include="Interfaces\IView.cs" />
+    <Compile Include="Interfaces\Views\IFileAction.cs" />
     <Compile Include="Interfaces\Views\IProjectDetailView.cs" />
     <Compile Include="Interfaces\Views\IProjectDetailViewModel.cs" />
     <Compile Include="Interfaces\Shell\IShellViewModel.cs" />

@@ -121,7 +121,8 @@
                     </Expander.Header>
                     <wpf:DataGrid AutoGenerateColumns="False"
                                   ItemsSource="{Binding ReferencesView}"
-                                  MinHeight="50">
+                                  MinHeight="50"
+                                  d:DataContext="{d:DesignInstance data:Reference}">
                         <wpf:DataGrid.Columns>
                             <wpf:DataGridCheckBoxColumn Binding="{Binding IsSelected}"
                                                         Width="30" />
@@ -172,6 +173,49 @@
                                                     Width="350"
                                                     IsReadOnly="True"
                                                     Binding="{Binding Include,Mode=OneWay}" />
+                        </wpf:DataGrid.Columns>
+                    </wpf:DataGrid>
+                </Expander>
+
+                <osc:DockPanelSplitter />
+
+                <Expander DockPanel.Dock="Top">
+                    <Expander.Header>
+                        <Label Content="Project References:"
+                               FontWeight="Bold" />
+                    </Expander.Header>
+                    <wpf:DataGrid AutoGenerateColumns="False"
+                                  ItemsSource="{Binding ProjectReferencesView}"
+                                  MinHeight="50"
+                                  d:DataContext="{d:DesignInstance data:ProjectReference}">
+                        <wpf:DataGrid.Columns>
+                            <wpf:DataGridCheckBoxColumn Binding="{Binding IsSelected}"
+                                                        Width="30" />
+                            <wpf:DataGridTextColumn Header="Name"
+                                                    Width="150"
+                                                    IsReadOnly="True"
+                                                    Binding="{Binding Name,Mode=OneWay}" />
+                            <wpf:DataGridTextColumn Header="ProjectGuid"
+                                                    Width="350"
+                                                    Binding="{Binding ProjectGuid}" />
+
+                            <wpf:DataGridTextColumn Header="Include"
+                                                    Width="350"
+                                                    IsReadOnly="True"
+                                                    Binding="{Binding Include,Mode=OneWay}" />
+
+                            <wpf:DataGridCheckBoxColumn Header="Missing"
+                                                        IsReadOnly="True"
+                                                        Binding="{Binding IsNotInSolution,Mode=OneWay}" />
+
+                            <wpf:DataGridCheckBoxColumn Header="Wrong ID"
+                                                        IsReadOnly="True"
+                                                        Binding="{Binding HasIncorrectProjectGuid,Mode=OneWay}" />
+
+                            <wpf:DataGridTextColumn Header="Path"
+                                                    IsReadOnly="True"
+                                                    CellStyle="{StaticResource problemMissingProjectFileColorStyle}"
+                                                    Binding="{Binding RootedPath,Mode=OneWay}" />
                         </wpf:DataGrid.Columns>
                     </wpf:DataGrid>
                 </Expander>

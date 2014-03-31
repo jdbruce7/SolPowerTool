@@ -6,7 +6,9 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -274,21 +276,26 @@ namespace SolPowerTool.App.Shell
                 return _loadSolutionCommand ??
                        (_loadSolutionCommand =
                         new RelayCommand<object>(
-                            param =>
-                            {
-                                BusyMessage = "Loading...";
-                                ThreadPool.QueueUserWorkItem(
-                                    o =>
-                                    {
-                                        Solution = Solution.Parse(SolutionFilename);
-                                        if (_saveChangesCommand != null)
-                                            _saveChangesCommand.CanExecute(null);
-                                        RaisePropertyChanged(() => Title);
-                                        IsBusy = false;
-                                    });
-                            },
+                            _beginLoadSolution,
                             parem => File.Exists(SolutionFilename)));
             }
+        }
+
+        private void _beginLoadSolution(object param)
+        {
+            BusyMessage = "Loading...";
+            ThreadPool.QueueUserWorkItem(o =>
+                {
+                    _loadSolution();
+                    IsBusy = false;
+                });
+        }
+        private void _loadSolution()
+        {
+            Solution = Solution.Parse(SolutionFilename);
+            if (_saveChangesCommand != null)
+                _saveChangesCommand.CanExecute(null);
+            RaisePropertyChanged(() => Title);
         }
 
         public ICommand MakeWriteableCommand
@@ -425,10 +432,244 @@ namespace SolPowerTool.App.Shell
 
         public ICommand DowngradeProjectsCommand
         {
-            get { return new RelayCommand(_downgradeProejcts); }
+            get { return new RelayCommand(_downgradeProjects); }
         }
 
-        private void _downgradeProejcts()
+        public ICommand AddMissingProjectReferencedProjectsCommand
+        {
+            get
+            {
+                return new RelayCommand(_addMissingProjectReferencedProjects, _hasMissingProjectReferencedProjects); new NotImplementedException();
+            }
+        }
+
+        private void _addMissingProjectReferencedProjects()
+        {
+            // Check for dirty read-only
+            bool allGood = true;
+            if ((File.GetAttributes(SolutionFilename) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+            {
+
+                var vm = Container.GetExportedValue<IDirtyReadonlyPromptViewModel>();
+                vm.Projects = new[] {Solution};
+                vm.ShowDialog();
+                switch (vm.Result)
+                {
+                    case DirtyReadonlyPromptResults.MakeWriteable:
+                        allGood = vm.Projects.All(project => project.MakeWriteable());
+                        break;
+                    case DirtyReadonlyPromptResults.Checkout:
+                        allGood = TeamFoundationClient.Checkout(vm.Projects.Select(p => p.Filename));
+                        break;
+                    case DirtyReadonlyPromptResults.Cancel:
+                    default:
+                        return;
+                }
+            }
+            if (!allGood)
+                return;
+
+            BusyMessage = "Adding missing projects..";
+            Task.Factory.StartNew(() =>
+                {
+                    Solution solution = Solution;
+                    do
+                    {
+                        List<ProjectReference> missingReferences = new List<ProjectReference>();
+                        foreach (var project in solution.Projects.Where(p => p.HasMissingProjectReferences))
+                        {
+                            var missingProjectReferences = project.ProjectReferences.Where(pr => pr.IsNotInSolution);
+                            foreach (var projectReference in missingProjectReferences)
+                            {
+                                var found =
+                                    missingReferences.FirstOrDefault(
+                                        mr => string.Compare(mr.RootedPath, projectReference.RootedPath, StringComparison.InvariantCultureIgnoreCase) == 0);
+                                if (found != null)
+                                {
+                                    if (projectReference.ProjectGuid != found.ProjectGuid)
+                                        throw new ApplicationException("Mismatched project guid");
+                                    if (string.Compare(projectReference.Name, found.Name, StringComparison.InvariantCultureIgnoreCase) != 0)
+                                        throw new ApplicationException("Mismatched project name");
+                                }
+                                else
+                                {
+                                    missingReferences.Add(projectReference);
+                                }
+                            }
+                        }
+                        var configs = solution.Projects.SelectMany(p => p.BuildConfigurations).Select(bc => new {bc.Configuration, bc.Platform}).Distinct();
+
+                        /*
+             * Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{0D439F87-0D86-4C64-A238-B9582749E55C}"
+             * EndProject
+             * Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PwC.Aura.Server.Replication.Provider", "Client\AuraReplication\PwC.Aura.Server.Replication.Provider\PwC.Aura.Server.Replication.Provider.csproj", "{6D6DC9C3-744D-478B-806C-751BDE529681}"
+             * EndProject
+             */
+                        StringBuilder projectSection = new StringBuilder();
+                        Folder solPowerFolder = solution.Folders
+                                                        .FirstOrDefault(f => string.Compare(f.Name, Folder.SOLPOWERFOLDER, StringComparison.InvariantCultureIgnoreCase) == 0);
+
+                        if (solPowerFolder == null)
+                        {
+                            solPowerFolder = new Folder(Folder.SOLPOWERFOLDER, Guid.NewGuid());
+                            projectSection.AppendFormat(@"Project(""{0:b}"") = ""{1}"", ""{2}"", ""{3:b}""" + Environment.NewLine,
+                                                        Elements.Project.FolderTypeID,
+                                                        solPowerFolder.Name,
+                                                        solPowerFolder.Name,
+                                                        solPowerFolder.Guid);
+                            projectSection.AppendLine("EndProject");
+                        }
+                        foreach (var missingReference in missingReferences)
+                        {
+                            projectSection.AppendFormat(@"Project(""{0:b}"") = ""{1}"", ""{2}"", ""{3:b}""" + Environment.NewLine,
+                                                        Elements.Project.ProjectTypeID,
+                                                        missingReference.Name,
+                                                        _relativePath(Solution.SolutionFilename, missingReference.RootedPath),
+                                                        missingReference.ProjectGuid);
+                            projectSection.AppendLine("EndProject");
+                        }
+
+                        /*
+                    {1D0DA165-7A0C-448D-8632-3638C870197A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+                    {1D0DA165-7A0C-448D-8632-3638C870197A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+                    {1D0DA165-7A0C-448D-8632-3638C870197A}.Debug|x86.ActiveCfg = Debug|x86
+                    {1D0DA165-7A0C-448D-8632-3638C870197A}.Debug|x86.Build.0 = Debug|x86
+                    {1D0DA165-7A0C-448D-8632-3638C870197A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+                    {1D0DA165-7A0C-448D-8632-3638C870197A}.Release|Any CPU.Build.0 = Release|Any CPU
+                    {1D0DA165-7A0C-448D-8632-3638C870197A}.Release|x86.ActiveCfg = Release|x86
+                    {1D0DA165-7A0C-448D-8632-3638C870197A}.Release|x86.Build.0 = Release|x86
+             */
+                        StringBuilder configSection = new StringBuilder();
+                        foreach (var missingReference in missingReferences)
+                            foreach (var config in configs)
+                                foreach (var s in new[] {"ActiveCfg", "Build.0"})
+                                    configSection.AppendFormat("\t\t{0:b}.{1}|{2}.{3} = {1}|{2}" + Environment.NewLine,
+                                                               missingReference.ProjectGuid,
+                                                               config.Configuration,
+                                                               config.Platform,
+                                                               s);
+
+                        StringBuilder nestedProjectSection = new StringBuilder();
+                        foreach (var missingReference in missingReferences)
+                            nestedProjectSection.AppendFormat("\t\t{0:b} = {1:b}" + Environment.NewLine, missingReference.ProjectGuid, solPowerFolder.Guid);
+
+                        var backupFilename = solution.SolutionFilename + ".backup";
+                        if (File.Exists(backupFilename))
+                        {
+                            File.SetAttributes(backupFilename, File.GetAttributes(backupFilename) & ~FileAttributes.ReadOnly);
+                            File.Delete(backupFilename);
+                        }
+                        File.Move(SolutionFilename, backupFilename);
+                        bool goodwrite = false;
+                        using (var reader = new StreamReader(backupFilename))
+                        using (var writer = new StreamWriter(SolutionFilename))
+                        {
+                            var section = FileSections.PreProjects;
+                            while (reader.Peek() >= 0)
+                            {
+                                string line = reader.ReadLine();
+                                Debug.Assert(line != null);
+                                switch (section)
+                                {
+                                    case FileSections.PreProjects:
+                                        // read until we reach begining of Projects list.
+                                        if (line.StartsWith("Project(\""))
+                                        {
+                                            do
+                                            {
+                                                writer.WriteLine(line);
+                                                line = reader.ReadLine();
+                                            } while (string.Compare(line.Trim(), "EndProject", StringComparison.InvariantCultureIgnoreCase) != 0); 
+                                            section = FileSections.Projects;
+                                        }
+                                        break;
+                                    case FileSections.Projects:
+                                        // read until we reach end of projects list.
+                                        if (line.StartsWith("Project(\""))
+                                        {
+                                            do
+                                            {
+                                                writer.WriteLine(line);
+                                                line = reader.ReadLine();
+                                            } while (string.Compare(line.Trim(), "EndProject", StringComparison.InvariantCultureIgnoreCase) != 0);
+                                        }
+                                        else
+                                        {
+                                            // insert missing projects.
+                                            writer.Write(projectSection.ToString());
+                                            section = FileSections.PreConfigs;
+                                        }
+                                        break;
+                                    case FileSections.PreConfigs:
+                                        // read until we get to GlobalSection(ProjectConfigurationPlatforms) = postSolution
+                                        if (
+                                            string.Compare(line.Trim(), "GlobalSection(ProjectConfigurationPlatforms) = postSolution", StringComparison.InvariantCultureIgnoreCase) ==
+                                            0)
+                                            section = FileSections.Configs;
+                                        break;
+                                    case FileSections.Configs:
+                                        // read until we reach the end of configs
+                                        if (string.Compare(line.Trim(), "EndGlobalSection", StringComparison.InvariantCultureIgnoreCase) == 0)
+                                        {
+                                            writer.Write(configSection.ToString());
+                                            section = FileSections.PreNestedProjects;
+                                        }
+                                        break;
+                                    case FileSections.PreNestedProjects:
+                                        // read until GlobalSection(NestedProjects) = preSolution
+                                        if (string.Compare(line.Trim(), "GlobalSection(NestedProjects) = preSolution", StringComparison.InvariantCultureIgnoreCase) == 0)
+                                            section = FileSections.NestedProjects;
+                                        break;
+                                    case FileSections.NestedProjects:
+                                        // read until end of nested projects
+                                        if (string.Compare(line.Trim(), "EndGlobalSection", StringComparison.InvariantCultureIgnoreCase) == 0)
+                                        {
+                                            writer.Write(nestedProjectSection.ToString());
+                                            section = FileSections.PostInserts;
+                                        }
+                                        break;
+                                    case FileSections.PostInserts:
+                                        goodwrite = true;
+                                        break;
+                                }
+                                writer.WriteLine(line);
+                            }
+                        }
+
+                        if (!goodwrite)
+                            throw new ApplicationException("Didn't get through all the solution sections.");
+
+                        solution = Solution.Parse(SolutionFilename);
+                        if (solution.Projects.All(p => !p.HasMissingProjectReferences))
+                            break;
+                    } while (true); 
+
+                    _loadSolution();
+                    IsBusy = false;
+                });
+
+        }
+
+        private enum FileSections
+        {
+            PreProjects, Projects, PreConfigs, Configs, PreNestedProjects, NestedProjects, PostInserts,
+        }
+
+        private string _relativePath(string a, string b)
+        {
+            var x = new Uri(a);
+            var y = new Uri(b);
+            return Uri.UnescapeDataString(x.MakeRelativeUri(y).ToString().Replace('/', '\\'));
+        }
+
+        private bool _hasMissingProjectReferencedProjects()
+        {
+            if (Solution == null || Solution.Projects == null)
+                return false;
+            return Solution.Projects.Any(p => p.HasMissingProjectReferences);
+        }
+
+        private void _downgradeProjects()
         {
             foreach (var project in _solution.Projects.Where(project => project.IsSelected && project.TargetFrameworkVersion != "v4.0"))
                 project.TargetFrameworkVersion = "v4.0";

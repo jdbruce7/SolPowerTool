@@ -125,7 +125,7 @@ namespace SolPowerTool.App.ViewModels
                     allGood = vm.Projects.All(project => project.MakeWriteable());
                     break;
                 case DirtyReadonlyPromptResults.Checkout:
-                    allGood = TeamFoundationClient.Checkout(vm.Projects.Select(p => p.ProjectFilename));
+                    allGood = TeamFoundationClient.Checkout(vm.Projects.Select(p => p.Filename));
                     break;
                 case DirtyReadonlyPromptResults.Cancel:
                 default:

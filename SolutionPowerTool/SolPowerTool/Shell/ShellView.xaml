@@ -148,6 +148,10 @@
                                          GroupName="ShowDetails" />
 
                         </StackPanel>
+                        <StackPanel Margin="5">
+                            <Button Content="Add missing Project Referenced projects"
+                                    Command="{Binding AddMissingProjectReferencedProjectsCommand}" />
+                        </StackPanel>
                     </StackPanel>
                 </TabItem>
 
@@ -235,6 +239,12 @@
                                 <wpf:DataGridCheckBoxColumn Header="Irregular output paths"
                                                             Width="130"
                                                             Binding="{Binding IrregularOutputPaths,Mode=OneWay}"
+                                                            IsReadOnly="True" />
+                                <wpf:DataGridCheckBoxColumn Header="References Missing"
+                                                            Binding="{Binding HasMissingProjectReferences}"
+                                                            IsReadOnly="True" />
+                                <wpf:DataGridCheckBoxColumn Header="Incorrect Project Reference Guid"
+                                                            Binding="{Binding HasIncorrectProjectReferenceGuids}"
                                                             IsReadOnly="True" />
                             </wpf:DataGrid.Columns>
                         </wpf:DataGrid>
