@@ -619,6 +619,14 @@ namespace SolPowerTool.App.Shell
                                         // read until GlobalSection(NestedProjects) = preSolution
                                         if (string.Compare(line.Trim(), "GlobalSection(NestedProjects) = preSolution", StringComparison.InvariantCultureIgnoreCase) == 0)
                                             section = FileSections.NestedProjects;
+                                        else if (string.Compare(line.Trim(), "EndGlobal", StringComparison.InvariantCultureIgnoreCase) == 0)
+                                        {
+                                            writer.WriteLine("\tGlobalSection(NestedProjects) = preSolution");
+                                            writer.Write(nestedProjectSection.ToString());
+                                            writer.WriteLine("\tEndGlobalSection");
+                                            section = FileSections.PostInserts;
+                                            goodwrite = true;
+                                        }
                                         break;
                                     case FileSections.NestedProjects:
                                         // read until end of nested projects
