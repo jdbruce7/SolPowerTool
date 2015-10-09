@@ -422,6 +422,28 @@ namespace SolPowerTool.App.Shell
             }
         }
 
+        private ICommand _deleteSelectedConfigsCommand;
+
+        public ICommand DeleteSelectedConfigsCommand => _deleteSelectedConfigsCommand
+                                                        ?? (_deleteSelectedConfigsCommand = new RelayCommand<string>(_deleteSelectedConfigs));
+
+        private void _deleteSelectedConfigs(string action)
+        {
+            switch (action.ToLower())
+            {
+                case "filter":
+                    foreach (var config in _buildConfigFilters.Where(i => i.IsSelected)
+                        .SelectMany(item => Solution.Projects.SelectMany(p => p.BuildConfigurations.Where(bc => bc.Name == item.Name)).ToList()))
+                        config.Delete();
+                    break;
+                case "selected":
+                    foreach (var config in _projectConfigurations.Where(bc => bc.IsSelected).ToList())
+                        config.Delete();
+                    break;
+            }
+
+        }
+
         public ICommand ClearLangVersionCommand
         {
             get

@@ -180,10 +180,16 @@
                                     CommandParameter="Configurations" />
                             <CheckBox Content="Filter in project details"
                                       IsChecked="{Binding IsBuildConfigFiltered}" />
-                            <Button Content="Clear language versions" 
+                            <Button Content="Clear language versions"
                                     Command="{Binding ClearLangVersionCommand}" />
-                            <CheckBox Content="FixForIncorrectElements" 
-                                      IsChecked="{Binding FixForIncorrectElements}"/>
+                            <CheckBox Content="FixForIncorrectElements"
+                                      IsChecked="{Binding FixForIncorrectElements}" />
+                            <Button Content="Delete configurations by filter"
+                                    Command="{Binding DeleteSelectedConfigsCommand}"
+                                    CommandParameter="Filter" />
+                            <Button Content="Delete selected configurations"
+                                    Command="{Binding DeleteSelectedConfigsCommand}"
+                                    CommandParameter="Selected" />
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
@@ -281,9 +287,13 @@
                                                             Width="130"
                                                             Binding="{Binding Project.IrregularOutputPaths,Mode=OneWay}"
                                                             IsReadOnly="True" />
-                                <wpf:DataGridTextColumn Header="LangVersion" 
-                                                        Binding="{Binding LangVersion}" 
-                                                        CellStyle="{StaticResource dirtyColorStyle}"/>
+                                <wpf:DataGridTextColumn Header="LangVersion"
+                                                        Binding="{Binding LangVersion}"
+                                                        CellStyle="{StaticResource dirtyColorStyle}" />
+                                <wpf:DataGridTextColumn Header="Type"
+                                                        IsReadOnly="True"
+                                                        Binding="{Binding Project.OutputType,Mode=OneWay}" />
+
                             </wpf:DataGrid.Columns>
                         </wpf:DataGrid>
 

@@ -31,6 +31,7 @@ namespace SolPowerTool.App.Data
         private string _outputPath;
         private bool _runCodeAnalysis;
         private string _langVersion;
+        private bool _isDeleted;
 
         private BuildConfiguration(Project project, string name)
         {
@@ -66,6 +67,17 @@ namespace SolPowerTool.App.Data
         public string RealName { get; private set; }
 
         public Project Project { get; private set; }
+
+        [DirtyTracking]
+        public bool IsDeleted
+        {
+            get { return _isDeleted; }
+            private set
+            {
+                _isDeleted = value;
+                RaisePropertyChanged(() => IsDeleted);
+            }
+        }
 
         [DirtyTracking]
         public string LangVersion
@@ -187,7 +199,7 @@ namespace SolPowerTool.App.Data
                 return null;
 
             string condition = conditionAttr.Value;
-            string[] a = condition.Split(new[] {"=="}, StringSplitOptions.None);
+            string[] a = condition.Split(new[] { "==" }, StringSplitOptions.None);
             if (a.Length != 2)
                 return null;
             if (a[0].Trim() != "'$(Configuration)|$(Platform)'")
@@ -400,6 +412,14 @@ namespace SolPowerTool.App.Data
                 return;
             XmlNode node;
 
+            if (IsDeleted)
+            {
+                node = _groupNode.ParentNode;
+                node?.RemoveChild(_groupNode);
+                IsDirty = false;
+                return;
+            }
+
             //<RunCodeAnalysis>true</RunCodeAnalysis>         
             node = _groupNode.SelectSingleNode("root:RunCodeAnalysis", _nsmgr);
             if (node != null)
@@ -469,6 +489,11 @@ namespace SolPowerTool.App.Data
             if (target == null)
                 throw new InvalidCastException("Must compare to same type.");
             return Name.CompareTo(target.Name);
+        }
+
+        public void Delete()
+        {
+            IsDeleted = true;
         }
     }
 }
