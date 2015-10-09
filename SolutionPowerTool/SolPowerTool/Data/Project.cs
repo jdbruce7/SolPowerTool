@@ -153,6 +153,7 @@ namespace SolPowerTool.App.Data
             }
         }
 
+        private bool _isTargetFrameworkUpdated;
         [DirtyTracking]
         public string TargetFrameworkVersion
         {
@@ -162,6 +163,7 @@ namespace SolPowerTool.App.Data
                 if (value == _targetFrameworkVersion)
                     return;
                 _targetFrameworkVersion = value;
+                _isTargetFrameworkUpdated = true;
                 RaisePropertyChanged(() => TargetFrameworkVersion);
             }
         }
@@ -364,6 +366,7 @@ namespace SolPowerTool.App.Data
         public void CommitChanges()
         {
             XmlElement root = _xmlDocument.DocumentElement;
+            Debug.Assert(root != null, "root != null");
             XmlNode firstPropertyGroup = root.SelectSingleNode("//root:Project/root:PropertyGroup[not(@Condition)]",
                                                               _nsmgr);
             // Save Project general properties
@@ -376,35 +379,51 @@ namespace SolPowerTool.App.Data
             if (node != null)
                 node.InnerText = AssemblyName;
 
-            node = firstPropertyGroup.SelectSingleNode("root:TargetFrameworkVersion", _nsmgr);
-            bool upgrade;
-            if (node != null)
-                if (node.InnerText != TargetFrameworkVersion)
+            if (_isTargetFrameworkUpdated)
+            {
+                node = firstPropertyGroup.SelectSingleNode("root:TargetFrameworkVersion", _nsmgr);
+                XmlNode nodeProfie = firstPropertyGroup.SelectSingleNode("root:TargetFrameworkProfile", _nsmgr);
+
+                if (node != null && node.InnerText != TargetFrameworkVersion)
                 {
-                    if (TargetFrameworkVersion == "v4.5")
+                    if (TargetFrameworkVersion.IsInList("v4.5", "v4.5.1", "v4.5.2", "v4.6"))
                     {
                         node.InnerText = TargetFrameworkVersion;
-                        upgrade = true;
+                        if (nodeProfie != null)
+                        {
+                            nodeProfie.InnerXml = null;
+                            var element = nodeProfie as XmlElement;
+                            if (element != null) element.IsEmpty = true;
+                        }
                         XmlNodeList list = root.SelectNodes("//root:Project/root:PropertyGroup[(@Condition)]",
-                                                            _nsmgr);
+                            _nsmgr);
                         if (list != null)
                         {
                             foreach (XmlNode propertyNode in list)
                             {
                                 node = propertyNode.SelectSingleNode("root:Prefer32Bit", _nsmgr);
                                 if (node != null) continue;
+                                Debug.Assert(root.OwnerDocument != null, "root.OwnerDocument!=null");
                                 node = root.OwnerDocument.CreateElement("Prefer32Bit", _nsmgr.LookupNamespace("root"));
                                 node.InnerText = "false";
                                 propertyNode.AppendChild(node);
                             }
                         }
                     }
-                    else if (TargetFrameworkVersion == "v4.0")
+                    else if (TargetFrameworkVersion.IsInList("v4.0", "v4.0 Client Profile"))
                     {
-                        node.InnerText = TargetFrameworkVersion;
-                        upgrade = true;
+                        if (TargetFrameworkVersion == "v4.0")
+                            node.InnerText = TargetFrameworkVersion;
+                        else
+                        {
+                            node.InnerText = "v4.0";
+                            Debug.Assert(root.OwnerDocument != null, "root.OwnerDocument!=null");
+                            if (nodeProfie == null)
+                                nodeProfie = root.OwnerDocument.CreateElement("", _nsmgr.LookupNamespace("root"));
+                            nodeProfie.InnerText = "Client";
+                        }
                         XmlNodeList list = root.SelectNodes("//root:Project/root:PropertyGroup[(@Condition)]",
-                                                            _nsmgr);
+                            _nsmgr);
                         if (list != null)
                         {
                             foreach (XmlNode propertyNode in list)
@@ -416,7 +435,7 @@ namespace SolPowerTool.App.Data
                         }
                     }
                 }
-
+            }
 
 
             foreach (BuildConfiguration buildConfiguration in BuildConfigurations)

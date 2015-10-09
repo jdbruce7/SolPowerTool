@@ -3,16 +3,16 @@
   <Profiles />
   <Settings>
     <Setting Name="ShowDetails" Type="Microsoft.Windows.Controls.DataGridRowDetailsVisibilityMode" Scope="User">
-      <Value Profile="(Default)">VisibleWhenSelected</Value>
+      <Value Profile="(Default)">Collapsed</Value>
     </Setting>
     <Setting Name="SolutionFilename" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="SelectedControlTab" Type="SolPowerTool.App.ViewModels.ControlTabs" Scope="User">
-      <Value Profile="(Default)">Projects</Value>
+    <Setting Name="SelectedControlTab" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="SelectedProjectsTab" Type="SolPowerTool.App.ViewModels.ProjectTabs" Scope="User">
-      <Value Profile="(Default)">Projects</Value>
+    <Setting Name="SelectedProjectsTab" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="CodeAnalysisRuleDirectories" Type="System.String" Scope="User">
       <Value Profile="(Default)" />

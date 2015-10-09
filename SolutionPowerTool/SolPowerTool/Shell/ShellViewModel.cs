@@ -58,9 +58,10 @@ namespace SolPowerTool.App.Shell
             DTOBase.AnyDirtyChanged += DTOBase_AnyDirtyChanged;
 
             ShowDetails = Settings.Default.ShowDetails;
+            _selectedTargetFrameworkVersion = "v4.6";
             SolutionFilename = Settings.Default.SolutionFilename;
-            SelectedControlTab = Settings.Default.SelectedControlTab;
-            SelectedProjectsTab = Settings.Default.SelectedProjectsTab;
+            SelectedControlTab = (ControlTabs)Settings.Default.SelectedControlTab;
+            SelectedProjectsTab = (ProjectTabs)Settings.Default.SelectedProjectsTab;
 
             if (LoadSolutionCommand.CanExecute(null))
                 Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => LoadSolutionCommand.Execute(null)), DispatcherPriority.Background);
@@ -259,6 +260,7 @@ namespace SolPowerTool.App.Shell
         private ICommand _selectProjectsCommand;
         private ICommand _showProjectDetailCommand;
         private ICommand _toggleCACommand;
+        private string _selectedTargetFrameworkVersion;
 
         public ICommand SelectFileCommand
         {
@@ -426,14 +428,14 @@ namespace SolPowerTool.App.Shell
 
         private void _upgradeProjects()
         {
-            foreach (var project in _solution.Projects.Where(project => project.IsSelected && project.TargetFrameworkVersion != "v4.5"))
-                project.TargetFrameworkVersion = "v4.5";
+            foreach (var project in _solution.Projects.Where(project => project.IsSelected))// && project.TargetFrameworkVersion != SelectedTargetFrameworkVersion
+            {
+                project.TargetFrameworkVersion = SelectedTargetFrameworkVersion;
+
+            }
         }
 
-        public ICommand DowngradeProjectsCommand
-        {
-            get { return new RelayCommand(_downgradeProjects); }
-        }
+
 
         public ICommand AddMissingProjectReferencedProjectsCommand
         {
@@ -443,6 +445,22 @@ namespace SolPowerTool.App.Shell
             }
         }
 
+        public string SelectedTargetFrameworkVersion
+        {
+            get { return _selectedTargetFrameworkVersion; }
+            set { _selectedTargetFrameworkVersion = value; }
+        }
+
+        public string[] AvailableTargetFrameworkVersions => new[]
+            {
+                "v4.6",
+                "v4.5.2",
+                "v4.5.1",
+                "v4.5",
+                "v4.0",
+                "v4.0 Client Profile",
+            };
+
         private void _addMissingProjectReferencedProjects()
         {
             // Check for dirty read-only
@@ -451,7 +469,7 @@ namespace SolPowerTool.App.Shell
             {
 
                 var vm = Container.GetExportedValue<IDirtyReadonlyPromptViewModel>();
-                vm.Projects = new[] {Solution};
+                vm.Projects = new[] { Solution };
                 vm.ShowDialog();
                 switch (vm.Result)
                 {
@@ -497,7 +515,7 @@ namespace SolPowerTool.App.Shell
                                 }
                             }
                         }
-                        var configs = solution.Projects.SelectMany(p => p.BuildConfigurations).Select(bc => new {bc.Configuration, bc.Platform}).Distinct();
+                        var configs = solution.Projects.SelectMany(p => p.BuildConfigurations).Select(bc => new { bc.Configuration, bc.Platform }).Distinct();
 
                         /*
              * Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{0D439F87-0D86-4C64-A238-B9582749E55C}"
@@ -542,7 +560,7 @@ namespace SolPowerTool.App.Shell
                         StringBuilder configSection = new StringBuilder();
                         foreach (var missingReference in missingReferences)
                             foreach (var config in configs)
-                                foreach (var s in new[] {"ActiveCfg", "Build.0"})
+                                foreach (var s in new[] { "ActiveCfg", "Build.0" })
                                     configSection.AppendFormat("\t\t{0:b}.{1}|{2}.{3} = {1}|{2}" + Environment.NewLine,
                                                                missingReference.ProjectGuid,
                                                                config.Configuration,
@@ -579,7 +597,7 @@ namespace SolPowerTool.App.Shell
                                             {
                                                 writer.WriteLine(line);
                                                 line = reader.ReadLine();
-                                            } while (string.Compare(line.Trim(), "EndProject", StringComparison.InvariantCultureIgnoreCase) != 0); 
+                                            } while (string.Compare(line.Trim(), "EndProject", StringComparison.InvariantCultureIgnoreCase) != 0);
                                             section = FileSections.Projects;
                                         }
                                         break;
@@ -650,7 +668,7 @@ namespace SolPowerTool.App.Shell
                         solution = Solution.Parse(SolutionFilename);
                         if (solution.Projects.All(p => !p.HasMissingProjectReferences))
                             break;
-                    } while (true); 
+                    } while (true);
 
                     _loadSolution();
                     IsBusy = false;
@@ -677,11 +695,7 @@ namespace SolPowerTool.App.Shell
             return Solution.Projects.Any(p => p.HasMissingProjectReferences);
         }
 
-        private void _downgradeProjects()
-        {
-            foreach (var project in _solution.Projects.Where(project => project.IsSelected && project.TargetFrameworkVersion != "v4.0"))
-                project.TargetFrameworkVersion = "v4.0";
-        }
+
 
         #endregion
 
@@ -695,8 +709,8 @@ namespace SolPowerTool.App.Shell
             {
                 Settings.Default.ShowDetails = ShowDetails;
                 Settings.Default.SolutionFilename = SolutionFilename;
-                Settings.Default.SelectedControlTab = SelectedControlTab;
-                Settings.Default.SelectedProjectsTab = SelectedProjectsTab;
+                Settings.Default.SelectedControlTab = (int)SelectedControlTab;
+                Settings.Default.SelectedProjectsTab = (int)SelectedProjectsTab;
 
                 Settings.Default.Save();
             }

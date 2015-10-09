@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
@@ -25,7 +26,8 @@ namespace SolPowerTool.App
 
             splash.SetVersion(Assembly.GetEntryAssembly().GetName().Version);
             splash.SetMessage("Loading...");
-            splash.Show();
+            if (!Debugger.IsAttached)
+                splash.Show();
 
             new Bootstrapper().Run();
 
