@@ -224,6 +224,18 @@ namespace SolPowerTool.App.Shell
             }
         }
 
+        public bool FixForIncorrectElements
+        {
+            get { return Settings.Default.FixForIncorrectElements; }
+            set
+            {
+                Settings.Default.FixForIncorrectElements = value;
+                Settings.Default.Save();
+                RaisePropertyChanged(() => FixForIncorrectElements);
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
+
         public bool IsBusy
         {
             get { return _isBusy; }
@@ -261,6 +273,7 @@ namespace SolPowerTool.App.Shell
         private ICommand _showProjectDetailCommand;
         private ICommand _toggleCACommand;
         private string _selectedTargetFrameworkVersion;
+        private ICommand _clearLangVersionCommand;
 
         public ICommand SelectFileCommand
         {
@@ -353,10 +366,11 @@ namespace SolPowerTool.App.Shell
                 return _fixMissingElementsCommand
                        ?? (_fixMissingElementsCommand
                            = new RelayCommand<object>(param =>
-                                                          {
-                                                              foreach (BuildConfiguration configuration in _projectConfigurations.Where(bc => !bc.IsExcluded && bc.RunCodeAnalysis && bc.IsMissingElements))
-                                                                  configuration.IsDirty = true;
-                                                          }));
+                               {
+                                   foreach (BuildConfiguration configuration in _projectConfigurations.Where(bc => !bc.IsExcluded && bc.RunCodeAnalysis && bc.IsMissingElements))
+                                       configuration.IsDirty = true;
+                               },
+                               param => Settings.Default.FixForIncorrectElements));
             }
         }
 
@@ -405,6 +419,20 @@ namespace SolPowerTool.App.Shell
                                              break;
                                      }
                                  }));
+            }
+        }
+
+        public ICommand ClearLangVersionCommand
+        {
+            get
+            {
+                return _clearLangVersionCommand
+                       ?? (_clearLangVersionCommand
+                           = new RelayCommand(() =>
+                               {
+                                   foreach (var config in Solution.Projects.SelectMany(project => project.BuildConfigurations.Where(bc => !string.IsNullOrWhiteSpace(bc.LangVersion))))
+                                       config.LangVersion = null;
+                               }));
             }
         }
 

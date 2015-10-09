@@ -1,6 +1,8 @@
-﻿using System.ComponentModel.Composition;
+﻿using System;
+using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using SolPowerTool.App.Interfaces.Shell;
 
 namespace SolPowerTool.App.Shell
@@ -27,6 +29,12 @@ namespace SolPowerTool.App.Shell
         {
             if (ViewModel.ShowProjectDetailCommand.CanExecute(null))
                 ViewModel.ShowProjectDetailCommand.Execute(null);
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            Application.Current.Dispatcher.InvokeAsync(() => { Application.Current.Shutdown(); }, DispatcherPriority.ApplicationIdle);
+            base.OnClosed(e);
         }
     }
 }

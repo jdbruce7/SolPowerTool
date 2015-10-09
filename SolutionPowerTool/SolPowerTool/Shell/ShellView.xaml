@@ -180,6 +180,10 @@
                                     CommandParameter="Configurations" />
                             <CheckBox Content="Filter in project details"
                                       IsChecked="{Binding IsBuildConfigFiltered}" />
+                            <Button Content="Clear language versions" 
+                                    Command="{Binding ClearLangVersionCommand}" />
+                            <CheckBox Content="FixForIncorrectElements" 
+                                      IsChecked="{Binding FixForIncorrectElements}"/>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
@@ -277,6 +281,9 @@
                                                             Width="130"
                                                             Binding="{Binding Project.IrregularOutputPaths,Mode=OneWay}"
                                                             IsReadOnly="True" />
+                                <wpf:DataGridTextColumn Header="LangVersion" 
+                                                        Binding="{Binding LangVersion}" 
+                                                        CellStyle="{StaticResource dirtyColorStyle}"/>
                             </wpf:DataGrid.Columns>
                         </wpf:DataGrid>
 

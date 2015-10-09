@@ -115,5 +115,17 @@ namespace SolPowerTool.App.Properties {
                 return ((string)(this["ModulesFolder"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool FixForIncorrectElements {
+            get {
+                return ((bool)(this["FixForIncorrectElements"]));
+            }
+            set {
+                this["FixForIncorrectElements"] = value;
+            }
+        }
     }
 }

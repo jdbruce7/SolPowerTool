@@ -26,8 +26,9 @@ namespace SolPowerTool.App
 
             splash.SetVersion(Assembly.GetEntryAssembly().GetName().Version);
             splash.SetMessage("Loading...");
-            if (!Debugger.IsAttached)
-                splash.Show();
+            if (Debugger.IsAttached)
+                splash.Topmost = false;
+            splash.Show();
 
             new Bootstrapper().Run();
 

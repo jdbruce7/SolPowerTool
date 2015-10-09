@@ -30,6 +30,7 @@ namespace SolPowerTool.App.Data
         private XmlNamespaceManager _nsmgr;
         private string _outputPath;
         private bool _runCodeAnalysis;
+        private string _langVersion;
 
         private BuildConfiguration(Project project, string name)
         {
@@ -65,6 +66,19 @@ namespace SolPowerTool.App.Data
         public string RealName { get; private set; }
 
         public Project Project { get; private set; }
+
+        [DirtyTracking]
+        public string LangVersion
+        {
+            get { return _langVersion; }
+            set
+            {
+                if (_langVersion == value)
+                    return;
+                _langVersion = value;
+                RaisePropertyChanged(() => LangVersion);
+            }
+        }
 
         [DirtyTracking]
         public bool RunCodeAnalysis
@@ -222,6 +236,10 @@ namespace SolPowerTool.App.Data
             if (node != null)
                 OutputPath = node.InnerText;
 
+            //LangVersion
+            node = groupNode.SelectSingleNode("root:LangVersion", nsmgr);
+            LangVersion = node?.InnerText;
+
             IsDirty = false;
             return this;
         }
@@ -311,6 +329,7 @@ namespace SolPowerTool.App.Data
 
         private void _fixForIncorrectElements()
         {
+            if (!Settings.Default.FixForIncorrectElements) return;
             XmlNode node;
             XmlNodeList nodes;
 
@@ -424,6 +443,23 @@ namespace SolPowerTool.App.Data
                     _groupNode.AppendChild(node);
                 }
             }
+
+            //LangVersion
+            node = _groupNode.SelectSingleNode("root:LangVersion", _nsmgr);
+            if (string.IsNullOrWhiteSpace(LangVersion) && node != null)
+                _groupNode.RemoveChild(node);
+            else
+            {
+                if (node == null)
+                {
+                    node = _groupNode.OwnerDocument.CreateNode(XmlNodeType.Element, "LangVersion", _nsmgr.LookupNamespace("root"));
+                    node.InnerText = LangVersion;
+                    _groupNode.AppendChild(node);
+                }
+                else if (node.InnerText != LangVersion)
+                    node.InnerText = LangVersion;
+            }
+
             IsDirty = false;
         }
 

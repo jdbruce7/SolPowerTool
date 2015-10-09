@@ -26,5 +26,8 @@
     <Setting Name="ModulesFolder" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Modules</Value>
     </Setting>
+    <Setting Name="FixForIncorrectElements" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
