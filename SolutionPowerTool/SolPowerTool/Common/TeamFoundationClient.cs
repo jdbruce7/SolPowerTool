@@ -14,6 +14,7 @@ namespace SolPowerTool.App.Common
     {
         private const string TFS_2010 = @"Microsoft Visual Studio 10.0\Common7\IDE\TF.exe";
         private const string TFS_2012 = @"Microsoft Visual Studio 11.0\Common7\IDE\TF.exe";
+        private const string TFS_2014 = @"Microsoft Visual Studio 14.0\Common7\IDE\TF.exe";
         private static readonly string TF_EXE;
 
         #region Cmd file definitions
@@ -72,12 +73,23 @@ SET SCRIPT_ERR=0
 
         static TeamFoundationClient()
         {
+            // 2015
+            TF_EXE = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), TFS_2014);
+            if (File.Exists(TF_EXE))
+                return;
+            TF_EXE = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), TFS_2014);
+            if (File.Exists(TF_EXE))
+                return;
+
+            // 2012 
             TF_EXE = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), TFS_2012);
             if (File.Exists(TF_EXE))
                 return;
             TF_EXE = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), TFS_2012);
             if (File.Exists(TF_EXE))
                 return;
+
+            // 2010
             TF_EXE = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), TFS_2010);
             if (File.Exists(TF_EXE))
                 return;
