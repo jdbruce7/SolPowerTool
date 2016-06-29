@@ -58,7 +58,7 @@ namespace SolPowerTool.App.Shell
             DTOBase.AnyDirtyChanged += DTOBase_AnyDirtyChanged;
 
             ShowDetails = Settings.Default.ShowDetails;
-            _selectedTargetFrameworkVersion = "v4.6";
+            _selectedTargetFrameworkVersion = "v4.6.1";
             SolutionFilename = Settings.Default.SolutionFilename;
             SelectedControlTab = (ControlTabs)Settings.Default.SelectedControlTab;
             SelectedProjectsTab = (ProjectTabs)Settings.Default.SelectedProjectsTab;
@@ -503,6 +503,8 @@ namespace SolPowerTool.App.Shell
 
         public string[] AvailableTargetFrameworkVersions => new[]
             {
+                "v4.6.2",
+                "v4.6.1",
                 "v4.6",
                 "v4.5.2",
                 "v4.5.1",

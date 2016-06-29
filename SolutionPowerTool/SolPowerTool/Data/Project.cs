@@ -386,7 +386,7 @@ namespace SolPowerTool.App.Data
 
                 if (node != null && node.InnerText != TargetFrameworkVersion)
                 {
-                    if (TargetFrameworkVersion.IsInList("v4.5", "v4.5.1", "v4.5.2", "v4.6"))
+                    if (TargetFrameworkVersion.IsInList("v4.5", "v4.5.1", "v4.5.2", "v4.6", "v4.6.1", "v4.6.2"))
                     {
                         node.InnerText = TargetFrameworkVersion;
                         if (nodeProfie != null)
@@ -434,6 +434,8 @@ namespace SolPowerTool.App.Data
                             }
                         }
                     }
+                    else
+                        throw new ApplicationException($"Target framework update not implemented: {TargetFrameworkVersion}");
                 }
             }
 
