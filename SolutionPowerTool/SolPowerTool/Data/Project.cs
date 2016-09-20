@@ -52,6 +52,13 @@ namespace SolPowerTool.App.Data
             _fileWatcher.Changed += _fileWatcher_Changed;
         }
 
+        public Project(Solution solution, Elements.Project projectElement)
+        {
+            Solution = solution;
+            ProjectGuid = projectElement.ProjectGuid;
+            ProjectName = projectElement.DisplayName;
+        }
+
         public DirtyTrackingCollection<Reference> References { get; private set; }
 
         public DirtyTrackingCollection<ProjectReference> ProjectReferences { get; private set; }
@@ -60,6 +67,7 @@ namespace SolPowerTool.App.Data
         {
             get
             {
+                if (References == null) return null;
                 ICollectionView collectionView = CollectionViewSource.GetDefaultView(References);
                 collectionView.SortDescriptions.Add(new SortDescription("Include", ListSortDirection.Ascending));
                 return collectionView;
@@ -70,6 +78,7 @@ namespace SolPowerTool.App.Data
         {
             get
             {
+                if (ProjectReferences == null) return null;
                 ICollectionView collectionView = CollectionViewSource.GetDefaultView(ProjectReferences);
                 collectionView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                 return collectionView;
@@ -92,6 +101,7 @@ namespace SolPowerTool.App.Data
         {
             get
             {
+                if (!IsLoaded) return true;
                 _projectFileInfo.Refresh();
                 bool b = (_projectFileInfo.Attributes & FileAttributes.ReadOnly) != 0;
                 if (_isReadOnly == b)
@@ -101,6 +111,8 @@ namespace SolPowerTool.App.Data
                 return b;
             }
         }
+
+        public bool IsLoaded => _projectFileInfo != null && _projectFileInfo.Exists;
 
         public static IEnumerable<string> FilterOut
         {
@@ -118,11 +130,8 @@ namespace SolPowerTool.App.Data
             }
         }
 
-        public string ProjectName
-        {
-            get { return Path.GetFileNameWithoutExtension(ProjectFilename); }
-        }
-
+        public string ProjectName { get; set; }
+        
         public string ProjectFilename { get; private set; }
 
         public Guid ProjectGuid { get; private set; }
@@ -170,7 +179,11 @@ namespace SolPowerTool.App.Data
 
         public bool IrregularOutputPaths
         {
-            get { return BuildConfigurations.Where(bc => !bc.IsExcluded).Select(bc => bc.NormalizedOutputPath).Distinct().Count() > 1; }
+            get
+            {
+                if (!IsLoaded) return false;
+                return BuildConfigurations.Where(bc => !bc.IsExcluded).Select(bc => bc.NormalizedOutputPath).Distinct().Count() > 1;
+            }
         }
 
         public string OutputType { get; private set; }
@@ -194,6 +207,7 @@ namespace SolPowerTool.App.Data
         {
             get
             {
+                if (BuildConfigurations == null) return null;
                 ICollectionView collectionView = CollectionViewSource.GetDefaultView(BuildConfigurations);
                 collectionView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                 collectionView.Filter = new Predicate<object>(param => !((BuildConfiguration)param).IsExcluded);
@@ -217,7 +231,11 @@ namespace SolPowerTool.App.Data
 
         public override bool IsDirty
         {
-            get { return base.IsDirty || BuildConfigurations.Any(bc => bc.IsDirty) || References.Any(bc => bc.IsDirty); }
+            get
+            {
+                if (!IsLoaded) return false;
+                return base.IsDirty || BuildConfigurations.Any(bc => bc.IsDirty) || References.Any(bc => bc.IsDirty);
+            }
             set { base.IsDirty = value; }
         }
 
@@ -278,6 +296,8 @@ namespace SolPowerTool.App.Data
 
         private void _parse()
         {
+            ProjectName = Path.GetFileNameWithoutExtension(ProjectFilename); 
+
             _xmlDocument = new XmlDocument();
             _xmlDocument.Load(ProjectFilename);
             var nsmgr = new XmlNamespaceManager(_xmlDocument.NameTable);

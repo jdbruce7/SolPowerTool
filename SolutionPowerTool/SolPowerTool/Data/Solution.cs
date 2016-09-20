@@ -112,6 +112,11 @@ namespace SolPowerTool.App.Data
                         throw new InvalidOperationException(string.Format("Duplicate project found: {0} ({1})", project.ProjectGuid, project.ProjectName));
                     Projects.Add(project);
                 }
+                else
+                {
+                    Project p = new Project(this, projectElement);
+                    Projects.Add(p);
+                }
             }
 
             foreach (Elements.Project folder in folders)
@@ -119,9 +124,9 @@ namespace SolPowerTool.App.Data
                 Folders.Add(new Folder(folder.DisplayName, folder.ProjectGuid));
             }
 
-            DistinctReferences = new ObservableCollection<Reference>(Projects.SelectMany(p => p.References).OrderBy(r => r.Name)); //.Where(p => p.HasHintPath);
+            DistinctReferences = new ObservableCollection<Reference>(Projects.Where(p=>p.IsLoaded).SelectMany(p => p.References).OrderBy(r => r.Name)); //.Where(p => p.HasHintPath);
 
-            foreach (Project project in Projects)
+            foreach (Project project in Projects.Where(p=>p.IsLoaded))
             {
                 foreach (ProjectReference projectReference in project.ProjectReferences)
                 {

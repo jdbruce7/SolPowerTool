@@ -183,7 +183,7 @@ namespace SolPowerTool.App.Shell
             {
                 if (_solution == null) return null;
 
-                _buildConfigFilters = new ObservableCollection<BuildConfigItemFilter>(_solution.Projects.SelectMany(p => p.BuildConfigurations).Select(
+                _buildConfigFilters = new ObservableCollection<BuildConfigItemFilter>(_solution.Projects.Where(p=>p.IsLoaded).SelectMany(p => p.BuildConfigurations).Select(
                     b => new BuildConfigItemFilter(b)).Distinct(_buildConfigCompare).OrderBy(b => b.Name));
                 return _buildConfigFilters;
             }
@@ -567,7 +567,7 @@ namespace SolPowerTool.App.Shell
                                 }
                             }
                         }
-                        var configs = solution.Projects.SelectMany(p => p.BuildConfigurations).Select(bc => new { bc.Configuration, bc.Platform }).Distinct();
+                        var configs = solution.Projects.Where(p=>p.IsLoaded).SelectMany(p => p.BuildConfigurations).Select(bc => new { bc.Configuration, bc.Platform }).Distinct().ToList();
 
                         /*
              * Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{0D439F87-0D86-4C64-A238-B9582749E55C}"
@@ -997,7 +997,7 @@ namespace SolPowerTool.App.Shell
             _projectConfigsView = null;
             _projectConfigurations = _solution != null
                                          ? new ObservableCollection<BuildConfiguration>(
-                                               _solution.Projects.SelectMany(p => p.BuildConfigurations).Where(
+                                               _solution.Projects.Where(p=>p.IsLoaded).SelectMany(p => p.BuildConfigurations).Where(
                                                    bc => !_showOnlySelected || !bc.IsExcluded)
                                                )
                                          : null;
